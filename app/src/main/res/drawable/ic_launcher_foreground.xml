@@ -1,0 +1,56 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Wallet Shadow -->
+    <path
+        android:fillColor="#101827"
+        android:pathData="M27,37 h54 a8,8 0 0,1 8,8 v34 a8,8 0 0,1 -8,8 h-54 a8,8 0 0,1 -8,-8 v-34 a8,8 0 0,1 8,-8 z" />
+
+    <!-- Wallet Body (Emerald theme) -->
+    <path
+        android:fillColor="#0D9488"
+        android:pathData="M27,35 h54 a8,8 0 0,1 8,8 v34 a8,8 0 0,1 -8,8 h-54 a8,8 0 0,1 -8,-8 v-34 a8,8 0 0,1 8,-8 z" />
+
+    <!-- Wallet Fold / Top accent -->
+    <path
+        android:fillColor="#0F766E"
+        android:pathData="M27,35 h54 a8,8 0 0,1 8,8 v6 h-70 v-6 a8,8 0 0,1 8,-8 z" />
+
+    <!-- Credit card peaking out of wallet -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M33,26 h42 a4,4 0 0,1 4,4 v10 h-50 v-10 a4,4 0 0,1 4,-4 z" />
+    <path
+        android:strokeColor="#34D399"
+        android:strokeWidth="1.5"
+        android:pathData="M38,32 h12" />
+
+    <!-- Analytics Chart Bars on Wallet -->
+    <!-- Bar 1 -->
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M33,68 h7 v6 h-7 z" />
+    <!-- Bar 2 -->
+    <path
+        android:fillColor="#6EE7B7"
+        android:pathData="M44,60 h7 v14 h-7 z" />
+    <!-- Bar 3 -->
+    <path
+        android:fillColor="#A7F3D0"
+        android:pathData="M55,52 h7 v22 h-7 z" />
+
+    <!-- Wallet Clasp / Badge -->
+    <path
+        android:fillColor="#1E293B"
+        android:strokeColor="#F59E0B"
+        android:strokeWidth="1.5"
+        android:pathData="M70,52 h18 a4,4 0 0,1 4,4 v8 a4,4 0 0,1 -4,4 h-18 z" />
+
+    <!-- Clasp Golden Dot -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M84,60m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+</vector>

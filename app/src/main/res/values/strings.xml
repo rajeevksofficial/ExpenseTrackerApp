@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Expense Tracker</string>
+    <string name="title_daily">Daily</string>
+    <string name="title_monthly">Monthly</string>
+    <string name="title_yearly">Yearly</string>
+    <string name="btn_add_expense">Add Expense</string>
+    <string name="btn_export_pdf">Export PDF</string>
+    <string name="btn_export_excel">Export Excel (CSV)</string>
+    <string name="total_expense">Total Spent</string>
+    <string name="transaction_count">Transactions</string>
+    <string name="top_category">Top Category</string>
+    <string name="no_expenses">No expenses found for this period</string>
+    <string name="add_your_first">Tap + below to record a new expense</string>
+    <string name="category_breakdown">Category Breakdown</string>
+    <string name="recent_transactions">Transactions</string>
+    <string name="dialog_add_title">New Expense</string>
+    <string name="hint_expense_title">What did you spend on? (e.g. Groceries)</string>
+    <string name="hint_amount">Amount ($)</string>
+    <string name="hint_notes">Optional Notes</string>
+    <string name="label_category">Category</string>
+    <string name="label_date">Date</string>
+    <string name="label_payment">Payment Method</string>
+    <string name="btn_save">Save Expense</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="export_success">Report generated successfully</string>
+</resources>
