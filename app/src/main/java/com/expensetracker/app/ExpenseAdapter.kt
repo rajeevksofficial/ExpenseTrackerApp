@@ -12,6 +12,7 @@ import java.util.Locale
 
 class ExpenseAdapter(
     private var expenses: List<Expense>,
+    private val onEditClick: (Expense) -> Unit,
     private val onDeleteClick: (Expense) -> Unit
 ) : RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder>() {
 
@@ -55,6 +56,14 @@ class ExpenseAdapter(
                 setColor(catColor)
             }
             binding.viewCategoryColor.background = drawable
+
+            binding.root.setOnClickListener {
+                onEditClick(expense)
+            }
+
+            binding.btnEditExpense.setOnClickListener {
+                onEditClick(expense)
+            }
 
             binding.btnDeleteExpense.setOnClickListener {
                 onDeleteClick(expense)

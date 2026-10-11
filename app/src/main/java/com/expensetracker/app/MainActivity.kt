@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.expensetracker.app.databinding.ActivityMainBinding
 import com.expensetracker.app.databinding.DialogAddExpenseBinding
 import com.expensetracker.app.databinding.ItemCategorySummaryBinding
+import com.expensetracker.app.databinding.ItemMonthSummaryBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -57,9 +58,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        expenseAdapter = ExpenseAdapter(emptyList()) { expense ->
-            confirmDeleteExpense(expense)
-        }
+        expenseAdapter = ExpenseAdapter(
+            expenses = emptyList(),
+            onEditClick = { expense ->
+                showAddOrEditExpenseDialog(expense)
+            },
+            onDeleteClick = { expense ->
+                confirmDeleteExpense(expense)
+            }
+        )
         binding.rvExpenses.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = expenseAdapter
@@ -113,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
         // Floating Action Button
         binding.fabAddExpense.setOnClickListener {
-            showAddExpenseDialog()
+            showAddOrEditExpenseDialog(null)
         }
     }
 
@@ -255,6 +262,69 @@ class MainActivity : AppCompatActivity() {
             binding.cardCategoryBreakdown.visibility = View.GONE
         }
 
+        // Populate Month-wise Total Amount Spent Card (in Yearly View)
+        binding.layoutMonthlyList.removeAllViews()
+        if (currentPeriod == ViewPeriod.YEARLY) {
+            val year = calendar.get(Calendar.YEAR)
+            val monthlySummaries = dbHelper.getMonthlySummaryForYear(year)
+            val hasYearlyExpenses = monthlySummaries.any { it.totalAmount > 0.0 }
+
+            if (hasYearlyExpenses) {
+                binding.cardMonthlyBreakdown.visibility = View.VISIBLE
+                val activeMonthsCount = monthlySummaries.count { it.totalAmount > 0.0 }
+                binding.tvMonthlyBreakdownSubtitle.text = "$activeMonthsCount active month${if (activeMonthsCount > 1) "s" else ""}"
+
+                val maxMonthAmount = monthlySummaries.maxOfOrNull { it.totalAmount }?.takeIf { it > 0.0 } ?: 1.0
+
+                for (monthSummary in monthlySummaries) {
+                    val itemBinding = ItemMonthSummaryBinding.inflate(
+                        layoutInflater,
+                        binding.layoutMonthlyList,
+                        false
+                    )
+
+                    itemBinding.tvMonthBadge.text = monthSummary.monthShortName
+                    itemBinding.tvMonthName.text = monthSummary.monthName
+
+                    if (monthSummary.totalAmount > 0.0) {
+                        itemBinding.tvMonthBadge.setBackgroundResource(R.drawable.bg_month_badge_active)
+                        itemBinding.tvMonthBadge.setTextColor(ContextCompat.getColor(this, R.color.primary))
+                        itemBinding.tvMonthAmount.text = String.format(Locale.US, "$%.2f", monthSummary.totalAmount)
+                        itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+                        itemBinding.tvMonthPercent.text = String.format(Locale.US, "%.1f%%", monthSummary.percentage)
+                        itemBinding.tvMonthCount.text = "${monthSummary.transactionCount} transaction${if (monthSummary.transactionCount > 1) "s" else ""}"
+                        val progressPct = ((monthSummary.totalAmount / maxMonthAmount) * 100).toInt().coerceIn(5, 100)
+                        itemBinding.progressMonth.progress = progressPct
+                        itemBinding.progressMonth.progressTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(this, R.color.primary)
+                        )
+                    } else {
+                        itemBinding.tvMonthBadge.setBackgroundResource(R.drawable.bg_month_badge)
+                        itemBinding.tvMonthBadge.setTextColor(ContextCompat.getColor(this, R.color.text_muted))
+                        itemBinding.tvMonthAmount.text = "$0.00"
+                        itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this, R.color.text_muted))
+                        itemBinding.tvMonthPercent.text = "0%"
+                        itemBinding.tvMonthCount.text = getString(R.string.no_expenses_month)
+                        itemBinding.progressMonth.progress = 0
+                    }
+
+                    // Tapping any month switches view to that month in Monthly mode
+                    itemBinding.root.setOnClickListener {
+                        calendar.set(Calendar.MONTH, monthSummary.monthIndex)
+                        currentPeriod = ViewPeriod.MONTHLY
+                        updateTabSelectionUI()
+                        loadExpenses()
+                    }
+
+                    binding.layoutMonthlyList.addView(itemBinding.root)
+                }
+            } else {
+                binding.cardMonthlyBreakdown.visibility = View.GONE
+            }
+        } else {
+            binding.cardMonthlyBreakdown.visibility = View.GONE
+        }
+
         // Empty state vs RecyclerView
         if (expenses.isEmpty()) {
             binding.layoutEmptyState.visibility = View.VISIBLE
@@ -266,13 +336,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showAddExpenseDialog() {
+    private fun showAddOrEditExpenseDialog(existingExpense: Expense? = null) {
+        val isEditMode = existingExpense != null
         val dialogBinding = DialogAddExpenseBinding.inflate(layoutInflater)
         val dialog = AlertDialog.Builder(this)
             .setView(dialogBinding.root)
             .create()
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Set Title & Button text
+        dialogBinding.tvDialogTitle.text = if (isEditMode) {
+            getString(R.string.dialog_edit_title)
+        } else {
+            getString(R.string.dialog_add_title)
+        }
+        dialogBinding.btnSaveExpense.text = if (isEditMode) {
+            getString(R.string.btn_update)
+        } else {
+            getString(R.string.btn_save)
+        }
 
         // Setup Spinners
         val catAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categories)
@@ -281,8 +364,20 @@ class MainActivity : AppCompatActivity() {
         val payAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, paymentMethods)
         dialogBinding.spinnerPaymentMethod.adapter = payAdapter
 
-        // Date selection
+        // Setup Autocomplete Intellisense Dropdowns
+        setupIntellisenseDropdowns(dialogBinding)
+
+        // Date selection:
+        // When navigating daily-wise, clicking + automatically captures that active viewed date
         val expenseCalendar = Calendar.getInstance()
+        if (existingExpense != null) {
+            expenseCalendar.timeInMillis = existingExpense.date
+        } else if (currentPeriod == ViewPeriod.DAILY) {
+            expenseCalendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
+            expenseCalendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH))
+            expenseCalendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
+        }
+
         val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         dialogBinding.btnPickDate.text = dateFormat.format(expenseCalendar.time)
 
@@ -299,6 +394,25 @@ class MainActivity : AppCompatActivity() {
                 expenseCalendar.get(Calendar.MONTH),
                 expenseCalendar.get(Calendar.DAY_OF_MONTH)
             ).show()
+        }
+
+        // Pre-fill fields if in Edit mode
+        if (existingExpense != null) {
+            dialogBinding.etExpenseAmount.setText(
+                if (existingExpense.amount % 1.0 == 0.0) {
+                    existingExpense.amount.toInt().toString()
+                } else {
+                    String.format(Locale.US, "%.2f", existingExpense.amount)
+                }
+            )
+            dialogBinding.etExpenseTitle.setText(existingExpense.title)
+            dialogBinding.etExpenseNotes.setText(existingExpense.notes)
+
+            val catPos = categories.indexOf(existingExpense.category)
+            if (catPos >= 0) dialogBinding.spinnerCategory.setSelection(catPos)
+
+            val payPos = paymentMethods.indexOf(existingExpense.paymentMethod)
+            if (payPos >= 0) dialogBinding.spinnerPaymentMethod.setSelection(payPos)
         }
 
         dialogBinding.btnCancelExpense.setOnClickListener {
@@ -328,22 +442,138 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val newExpense = Expense(
-                title = title,
-                amount = amount,
-                category = category,
-                date = expenseCalendar.timeInMillis,
-                paymentMethod = payment,
-                notes = notes
-            )
+            if (existingExpense != null) {
+                val updatedExpense = existingExpense.copy(
+                    title = title,
+                    amount = amount,
+                    category = category,
+                    date = expenseCalendar.timeInMillis,
+                    paymentMethod = payment,
+                    notes = notes
+                )
+                dbHelper.updateExpense(updatedExpense)
+                Toast.makeText(this, getString(R.string.expense_updated), Toast.LENGTH_SHORT).show()
+            } else {
+                val newExpense = Expense(
+                    title = title,
+                    amount = amount,
+                    category = category,
+                    date = expenseCalendar.timeInMillis,
+                    paymentMethod = payment,
+                    notes = notes
+                )
+                dbHelper.insertExpense(newExpense)
+                Toast.makeText(this, "Expense recorded successfully", Toast.LENGTH_SHORT).show()
+            }
 
-            dbHelper.insertExpense(newExpense)
             dialog.dismiss()
             loadExpenses()
-            Toast.makeText(this, "Expense recorded successfully", Toast.LENGTH_SHORT).show()
         }
 
         dialog.show()
+    }
+
+    private fun setupIntellisenseDropdowns(dialogBinding: DialogAddExpenseBinding) {
+        val defaultTitles = listOf(
+            "Morning Coffee & Croissant",
+            "Metro Train Card Recharge",
+            "Grocery Market",
+            "High Speed Internet Bill",
+            "Cinema Tickets & Snacks",
+            "Pharmacy & Vitamins",
+            "Summer Casual Shirt",
+            "Car Petrol Refuel",
+            "Dinner with Family",
+            "Office Lunch",
+            "Mobile Phone Recharge",
+            "Electricity Bill",
+            "Gym Membership",
+            "Uber Ride",
+            "Amazon Shopping",
+            "Flight Booking",
+            "Book Store"
+        )
+        val titleSuggestions = (dbHelper.getDistinctTitles() + defaultTitles).distinct()
+        val titleAdapter = SubstringAutoCompleteAdapter(
+            this,
+            R.layout.item_dropdown_suggestion,
+            R.id.tvSuggestion,
+            titleSuggestions
+        )
+        dialogBinding.etExpenseTitle.setAdapter(titleAdapter)
+        dialogBinding.etExpenseTitle.threshold = 1
+        dialogBinding.etExpenseTitle.setOnClickListener {
+            if (dialogBinding.etExpenseTitle.text.isNotEmpty()) {
+                dialogBinding.etExpenseTitle.showDropDown()
+            }
+        }
+
+        // Auto-select corresponding category when picking a suggestion
+        dialogBinding.etExpenseTitle.setOnItemClickListener { parent, _, position, _ ->
+            val selectedTitle = parent.getItemAtPosition(position) as? String
+            selectedTitle?.let { title ->
+                getSuggestedCategory(title)?.let { suggestedCat ->
+                    val catIndex = categories.indexOf(suggestedCat)
+                    if (catIndex >= 0) {
+                        dialogBinding.spinnerCategory.setSelection(catIndex)
+                    }
+                }
+            }
+        }
+
+        val defaultNotes = listOf(
+            "Bakery downtown",
+            "Weekly commute",
+            "Produce & dairy",
+            "Monthly fiber plan",
+            "Weekend movie with friends",
+            "Prescription refill",
+            "Weekend mall sale",
+            "Full tank",
+            "Paid via credit card",
+            "Split with colleagues",
+            "Monthly subscription",
+            "Reimbursement pending",
+            "Emergency expense",
+            "Personal care"
+        )
+        val noteSuggestions = (dbHelper.getDistinctNotes() + defaultNotes).distinct()
+        val noteAdapter = SubstringAutoCompleteAdapter(
+            this,
+            R.layout.item_dropdown_suggestion,
+            R.id.tvSuggestion,
+            noteSuggestions
+        )
+        dialogBinding.etExpenseNotes.setAdapter(noteAdapter)
+        dialogBinding.etExpenseNotes.threshold = 1
+        dialogBinding.etExpenseNotes.setOnClickListener {
+            if (dialogBinding.etExpenseNotes.text.isNotEmpty()) {
+                dialogBinding.etExpenseNotes.showDropDown()
+            }
+        }
+    }
+
+    private fun getSuggestedCategory(title: String): String? {
+        val lower = title.lowercase(Locale.ROOT)
+        return when {
+            lower.contains("coffee") || lower.contains("dinner") || lower.contains("lunch") ||
+                lower.contains("restaurant") || lower.contains("cafe") || lower.contains("food") ||
+                lower.contains("snack") || lower.contains("bakery") -> "Food & Dining"
+            lower.contains("metro") || lower.contains("train") || lower.contains("fuel") ||
+                lower.contains("petrol") || lower.contains("diesel") || lower.contains("uber") ||
+                lower.contains("cab") || lower.contains("bus") || lower.contains("commute") -> "Transportation"
+            lower.contains("grocer") || lower.contains("supermarket") || lower.contains("market") ||
+                lower.contains("produce") || lower.contains("milk") || lower.contains("dairy") -> "Groceries"
+            lower.contains("bill") || lower.contains("internet") || lower.contains("electric") ||
+                lower.contains("recharge") || lower.contains("water") || lower.contains("wifi") -> "Bills & Utilities"
+            lower.contains("cinema") || lower.contains("movie") || lower.contains("game") ||
+                lower.contains("netflix") || lower.contains("concert") -> "Entertainment"
+            lower.contains("pharmacy") || lower.contains("medicine") || lower.contains("doctor") ||
+                lower.contains("hospital") || lower.contains("vitamin") || lower.contains("health") -> "Health"
+            lower.contains("shirt") || lower.contains("shoes") || lower.contains("amazon") ||
+                lower.contains("mall") || lower.contains("shopping") || lower.contains("clothes") -> "Shopping"
+            else -> null
+        }
     }
 
     private fun confirmDeleteExpense(expense: Expense) {

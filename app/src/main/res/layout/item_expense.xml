@@ -5,6 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     android:background="@drawable/bg_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="14dp">
@@ -86,10 +89,20 @@
             tools:text="-$64.80" />
 
         <ImageView
-            android:id="@+id/btnDeleteExpense"
+            android:id="@+id/btnEditExpense"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Edit"
+            android:padding="6dp"
+            android:src="@drawable/ic_edit" />
+
+        <ImageView
+            android:id="@+id/btnDeleteExpense"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="4dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="Delete"
             android:padding="6dp"

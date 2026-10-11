@@ -14,6 +14,7 @@
     <string name="category_breakdown">Category Breakdown</string>
     <string name="recent_transactions">Transactions</string>
     <string name="dialog_add_title">New Expense</string>
+    <string name="dialog_edit_title">Edit Expense</string>
     <string name="hint_expense_title">What did you spend on? (e.g. Groceries)</string>
     <string name="hint_amount">Amount ($)</string>
     <string name="hint_notes">Optional Notes</string>
@@ -21,6 +22,10 @@
     <string name="label_date">Date</string>
     <string name="label_payment">Payment Method</string>
     <string name="btn_save">Save Expense</string>
+    <string name="btn_update">Update Expense</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="expense_updated">Expense updated successfully</string>
     <string name="export_success">Report generated successfully</string>
+    <string name="monthly_spending_title">Month-wise Spending</string>
+    <string name="no_expenses_month">No expenses</string>
 </resources>

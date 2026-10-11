@@ -16,6 +16,15 @@ data class CategorySummary(
     val percentage: Float
 )
 
+data class MonthSummary(
+    val monthIndex: Int, // 0..11
+    val monthName: String,
+    val monthShortName: String,
+    val totalAmount: Double,
+    val percentage: Float,
+    val transactionCount: Int
+)
+
 enum class ViewPeriod {
     DAILY,
     MONTHLY,
