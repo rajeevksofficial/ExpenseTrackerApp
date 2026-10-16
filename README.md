@@ -6,13 +6,13 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 
 ## 📱 App Snapshots & Visual Tour
 
-| Daily View (Vivid Headers) | Monthly Dashboard (Eye-Catching Categories & Transactions) | Month-wise Spending (Yearly Rainbow View & Top Month) |
+| Daily View (Clean Dual-Column Transactions) | Monthly Dashboard (Right-Justified Financials) | Yearly View (Itemized Transactions) |
 | :---: | :---: | :---: |
-| <img src="screenshots/daily_view.png" width="270" alt="Daily View with Vivid Category Breakdown and Transactions Headers" /> | <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown and Transactions" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> |
+| <img src="screenshots/daily_view.png" width="270" alt="Daily View with Clean Category and Payment Pills and Right-Justified Amounts" /> | <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown and Transactions" /> | <img src="screenshots/yearly_view_transactions.png" width="270" alt="Yearly View Itemized Transactions with Right-Justified Amounts and Clean Date/Payment Pills" /> |
 
-| Currency & Display Settings | Unified Export Menu | Add / Edit Expense Dialog |
+| Edit Expense (with Delete Action) | Month-wise Spending (Yearly Rainbow View) | Currency & Display Settings |
 | :---: | :---: | :---: |
-| <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> | <img src="screenshots/export_menu.png" width="270" alt="Export Popup Menu offering PDF and Excel" /> | <img src="screenshots/add_expense_dialog.png" width="270" alt="Add Expense Modal Dialog" /> |
+| <img src="screenshots/edit_expense_dialog.png" width="270" alt="Edit Expense Dialog with Delete option" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> | <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> |
 
 ---
 
@@ -30,10 +30,11 @@ A modern, offline-first personal finance Android application built in **Kotlin**
   - Automatic `★ TOP SPENT` gold crown highlight for the highest-expenditure month of the year.
   - Matching progress bars and interactive tap-to-drill-down month navigation.
 - **Modern Transactions Section**:
-  - 40×40dp squircle category avatars with 18% opacity tinted backgrounds, vibrant colored borders, and bold category initials (`G`, `T`, `F`, `B`, `E`).
-  - Color-matched category pill badges (`[ Groceries ]`, `[ Transportation ]`, etc.).
-  - High-visibility amount styling in vibrant rose-red (`-₹75.00`).
-  - Elegant date headers with calendar badges and daily spending total pills.
+  - **Clean Dual-Column Layout**: Category pill badges (`[ Groceries ]`, `[ Transportation ]`, etc.) and payment method badges (`[ 💳 Card ]`, `[ ⚡ UPI ]`, `[ 💵 Cash ]`, `[ 🏦 Net Banking ]`) neatly aligned side-by-side on the left side under the title.
+  - **Flush Right-Justified Financials**: Expense amounts (`-₹75.00`, `-₹25.00`) are bold and right-justified against the card edge, with cleanly formatted date/time stamps directly underneath.
+  - **Uncluttered & Intuitive Actions**: Tapping any transaction opens the Edit Expense dialog (featuring a dedicated "Delete" action button), and long-pressing opens an instant confirmation to delete.
+  - **40×40dp Squircle Avatars**: 18% opacity tinted backgrounds, vibrant category borders, and bold category initials (`G`, `T`, `F`, `B`, `E`).
+  - **Elegant Date Headers**: Daily spending total badges and transaction counts.
 
 ### 2. 💱 Multi-Currency Support (Dollar `$` & Rupee `₹`)
 - Switch anytime between **US Dollar (`$`)** and **Indian Rupee (`₹`)** in **Settings**.

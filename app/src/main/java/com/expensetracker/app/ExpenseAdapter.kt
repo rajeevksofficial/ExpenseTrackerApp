@@ -133,13 +133,12 @@ class ExpenseAdapter(
             val context = binding.root.context
             binding.tvExpenseTitle.text = expense.title
             binding.tvExpenseCategory.text = expense.category
+            binding.tvExpensePaymentMethod.text = getPaymentMethodWithIcon(expense.paymentMethod)
 
             if (item.isGrouped) {
-                val timeStr = timeFormat.format(Date(expense.date))
-                binding.tvExpenseDatePayment.text = "$timeStr • ${expense.paymentMethod}"
+                binding.tvExpenseDate.text = timeFormat.format(Date(expense.date))
             } else {
-                val dateStr = fullDateFormat.format(Date(expense.date))
-                binding.tvExpenseDatePayment.text = "$dateStr • ${expense.paymentMethod}"
+                binding.tvExpenseDate.text = fullDateFormat.format(Date(expense.date))
             }
 
             binding.tvExpenseAmount.text = String.format(Locale.US, "-%s%.2f", currencySymbol, expense.amount)
@@ -170,12 +169,9 @@ class ExpenseAdapter(
                 onEditClick(expense)
             }
 
-            binding.btnEditExpense.setOnClickListener {
-                onEditClick(expense)
-            }
-
-            binding.btnDeleteExpense.setOnClickListener {
+            binding.root.setOnLongClickListener {
                 onDeleteClick(expense)
+                true
             }
         }
     }
@@ -218,6 +214,19 @@ class ExpenseAdapter(
                 lower.contains("shop") -> "S"
                 clean.isNotEmpty() -> clean.first().uppercase()
                 else -> "•"
+            }
+        }
+
+        fun getPaymentMethodWithIcon(method: String): String {
+            val clean = method.trim()
+            val lower = clean.lowercase(Locale.ROOT)
+            return when {
+                lower.contains("card") -> "💳 $clean"
+                lower.contains("upi") -> "⚡ $clean"
+                lower.contains("cash") -> "💵 $clean"
+                lower.contains("net") || lower.contains("bank") -> "🏦 $clean"
+                clean.isNotEmpty() -> clean
+                else -> "Card"
             }
         }
     }

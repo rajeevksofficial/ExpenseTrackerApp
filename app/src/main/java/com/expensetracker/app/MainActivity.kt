@@ -542,6 +542,14 @@ class MainActivity : AppCompatActivity() {
 
             val payPos = paymentMethods.indexOf(existingExpense.paymentMethod)
             if (payPos >= 0) dialogBinding.spinnerPaymentMethod.setSelection(payPos)
+
+            dialogBinding.btnDeleteExpenseDialog.visibility = android.view.View.VISIBLE
+            dialogBinding.btnDeleteExpenseDialog.setOnClickListener {
+                dialog.dismiss()
+                confirmDeleteExpense(existingExpense)
+            }
+        } else {
+            dialogBinding.btnDeleteExpenseDialog.visibility = android.view.View.GONE
         }
 
         dialogBinding.btnCancelExpense.setOnClickListener {

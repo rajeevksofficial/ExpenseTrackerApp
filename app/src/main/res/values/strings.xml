@@ -26,6 +26,7 @@
     <string name="btn_save">Save Expense</string>
     <string name="btn_update">Update Expense</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="btn_delete">Delete</string>
     <string name="expense_updated">Expense updated successfully</string>
     <string name="export_success">Report generated successfully</string>
     <string name="monthly_spending_title">Month-wise Spending</string>
