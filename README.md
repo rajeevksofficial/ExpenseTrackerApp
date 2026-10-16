@@ -10,9 +10,13 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 | :---: | :---: | :---: |
 | <img src="screenshots/daily_view.png" width="270" alt="Daily View with Clean Category and Payment Pills and Right-Justified Amounts" /> | <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown and Transactions" /> | <img src="screenshots/yearly_view_transactions.png" width="270" alt="Yearly View Itemized Transactions with Right-Justified Amounts and Clean Date/Payment Pills" /> |
 
-| Edit Expense (with Delete Action) | Month-wise Spending (Yearly Rainbow View) | Currency & Display Settings |
+| Import CSV Menu (Sample Download & File Picker) | Export Menu (PDF & Excel CSV) | Currency & Display Settings |
 | :---: | :---: | :---: |
-| <img src="screenshots/edit_expense_dialog.png" width="270" alt="Edit Expense Dialog with Delete option" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> | <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> |
+| <img src="screenshots/import_menu.png" width="270" alt="Import Menu with Sample CSV Download and Import CSV" /> | <img src="screenshots/export_menu.png" width="270" alt="Export Menu with PDF and Excel CSV" /> | <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> |
+
+| Edit Expense (with Clean Action Icons) | Month-wise Spending (Yearly Rainbow View) | Sample CSV Share Sheet |
+| :---: | :---: | :---: |
+| <img src="screenshots/edit_expense_dialog.png" width="270" alt="Edit Expense Dialog with Delete option" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> | <img src="screenshots/sample_csv_share.png" width="270" alt="Native Share Sheet for Sample CSV Import Template" /> |
 
 ---
 
@@ -41,33 +45,36 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 - Preferences persist across app sessions via `SharedPreferences`.
 - Automatically formats all overview cards, transaction list items, category breakdown bars, expense input dialogs, generated PDF reports, and exported CSV sheets.
 
-### 2. 📅 Monthly Date Grouping with Daily Totals
+### 3. 📅 Monthly Date Grouping with Daily Totals
 - In **Monthly View**, transactions are automatically grouped under chronological date headers (e.g., `Friday, 09 Oct 2026`).
 - Each header displays the total number of transactions and the net sum spent on that specific day.
 - A quick **"Grouped by Date" / "Flat List"** toggle pill allows switching between grouped and standard chronological views on the fly.
 
-### 3. 📤 Unified Export Menu (PDF & Excel CSV)
-- Clean, dedicated **Export** icon button in the top bar.
+### 4. 📥 Unified Import Menu (Sample CSV Download & Import CSV)
+- Clean, dedicated **Import CSV** icon button in the top bar and quick action in empty state.
+- Anchored popup menu with vector icons:
+  - **Sample CSV Download**: Instantly generates an RFC-4180 compliant CSV template (`Sample_Expense_Import_Template.csv`) with UTF-8 BOM and pre-populated sample rows across categories and payment methods, opening Android's native share/save sheet so users can easily view, download, or edit the template format.
+  - **Import CSV**: Launches Android's native file picker (`ACTION_OPEN_DOCUMENT`) to select any CSV file.
+- **Smart Column Detection**: Automatically detects column names regardless of ordering (`Title`, `Category`, `Amount`, `Date`, `Payment Method`, `Notes`).
+- **Format Flexibility**: Supports ISO dates (`yyyy-MM-dd`), localized formats (`dd MMM yyyy`, `dd/MM/yyyy`), currency symbol stripping, and quoted values.
+- **Preview & Confirmation**: Displays an import summary dialog (record count and total amount) before writing to the database.
+- **Atomic Batch Insertion**: Inserts records efficiently in a single SQLite transaction.
+
+### 5. 📤 Unified Export Menu (PDF & Excel CSV)
+- Dedicated **Export** icon button in the top bar.
 - Anchored popup menu provides:
   - **Export as PDF**: Produces a clean, formatted PDF financial report ready for printing, filing, or sharing.
   - **Export as Excel (CSV)**: Generates an RFC-4180-compliant CSV file compatible with Microsoft Excel, Google Sheets, and LibreOffice Calc.
 - Direct sharing via Android's native share sheet.
 
-### 4. 📥 CSV Import & Restore Engine
-- Import transactions directly from CSV files using Android's native file picker (`ACTION_OPEN_DOCUMENT`).
-- **Smart Column Detection**: Automatically detects column names regardless of ordering (`Title`, `Category`, `Amount`, `Date`, `Payment Method`, `Notes`).
-- **Format Flexibility**: Supports ISO dates (`yyyy-MM-dd`), localized formats (`dd MMM yyyy`, `dd/MM/yyyy`), currency symbol stripping, and quoted values.
-- **Preview & Confirmation**: Shows an import summary dialog (record count and total amount) before writing to the database.
-- **Atomic Batch Insertion**: Inserts records efficiently in a single SQLite transaction.
-
-### 5. 🎨 Modern, Compact Top Bar
+### 6. 🎨 Modern, Compact Top Bar
 - Minimalist top bar with intuitive icon-only buttons:
-  - 📥 **Import CSV**
+  - 📥 **Import CSV (with Sample Template Download)**
   - 📤 **Export (PDF / Excel)**
   - ⚙️ **Settings**
 - Strict single-line "Expense Tracker" title with dynamic auto-sizing to prevent truncation or wrapping on any screen size.
 
-### 6. 🔒 100% Offline & Private
+### 7. 🔒 100% Offline & Private
 - All data is stored locally in an embedded SQLite database (`expenses.db`).
 - Zero cloud dependencies, zero external tracking, zero analytics scripts.
 - Your financial data never leaves your device.

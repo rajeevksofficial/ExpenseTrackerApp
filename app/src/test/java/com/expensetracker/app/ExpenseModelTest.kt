@@ -219,4 +219,43 @@ class ExpenseModelTest {
         assertEquals("Supermarket", expenses[1].title)
         assertEquals(64.80, expenses[1].amount, 0.001)
     }
+
+    @Test
+    fun testSampleCsvTemplateParsing() {
+        val sampleCsv = CsvImporter.getSampleCsvTemplateContent()
+        val stream = java.io.ByteArrayInputStream(sampleCsv.toByteArray(Charsets.UTF_8))
+        val expenses = CsvImporter.parseCsvStream(stream)
+
+        assertEquals(6, expenses.size)
+
+        // Row 1: Coffee & Snacks
+        assertEquals("Morning Coffee & Snacks", expenses[0].title)
+        assertEquals("Food & Dining", expenses[0].category)
+        assertEquals("UPI", expenses[0].paymentMethod)
+        assertEquals(150.00, expenses[0].amount, 0.001)
+        assertEquals("Starbucks coffee", expenses[0].notes)
+
+        // Row 2: Supermarket Groceries
+        assertEquals("Supermarket Groceries", expenses[1].title)
+        assertEquals("Groceries", expenses[1].category)
+        assertEquals("Card", expenses[1].paymentMethod)
+        assertEquals(1250.50, expenses[1].amount, 0.001)
+
+        // Row 3: Fuel & Petrol
+        assertEquals("Fuel & Petrol", expenses[2].title)
+        assertEquals("Transportation", expenses[2].category)
+        assertEquals("Cash", expenses[2].paymentMethod)
+        assertEquals(500.00, expenses[2].amount, 0.001)
+
+        // Row 4: Utility Bill
+        assertEquals("Electricity & Utility Bill", expenses[3].title)
+        assertEquals("Bills & Utilities", expenses[3].category)
+        assertEquals("Net Banking", expenses[3].paymentMethod)
+        assertEquals(820.00, expenses[3].amount, 0.001)
+
+        // Total sum of all 6 items
+        val totalExpected = 150.00 + 1250.50 + 500.00 + 820.00 + 450.00 + 240.00
+        assertEquals(totalExpected, expenses.sumOf { it.amount }, 0.001)
+    }
 }
+

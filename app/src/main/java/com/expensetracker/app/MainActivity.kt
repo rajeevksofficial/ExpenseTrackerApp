@@ -124,14 +124,14 @@ class MainActivity : AppCompatActivity() {
             showExportMenu(view)
         }
 
-        // Import CSV Button
-        binding.btnImportCsv.setOnClickListener {
-            launchCsvPicker()
+        // Import CSV Menu Button (Sample CSV Download & Import CSV)
+        binding.btnImportCsv.setOnClickListener { view ->
+            showImportMenu(view)
         }
 
         // Quick Import CSV Button in Empty State
-        binding.btnEmptyImportCsv.setOnClickListener {
-            launchCsvPicker()
+        binding.btnEmptyImportCsv.setOnClickListener { view ->
+            showImportMenu(view)
         }
 
         // Settings Button
@@ -804,7 +804,7 @@ class MainActivity : AppCompatActivity() {
 
         dialogBinding.cardSettingsImportCsv.setOnClickListener {
             dialog.dismiss()
-            launchCsvPicker()
+            showImportMenu(binding.btnImportCsv)
         }
 
         dialogBinding.btnApplySettings.setOnClickListener {
@@ -818,6 +818,42 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    private fun showImportMenu(anchorView: View) {
+        val popup = PopupMenu(this, anchorView)
+        popup.menuInflater.inflate(R.menu.menu_import, popup.menu)
+        try {
+            val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+            fieldMPopup.isAccessible = true
+            val mPopup = fieldMPopup.get(popup)
+            mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java).invoke(mPopup, true)
+        } catch (_: Exception) {}
+
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_download_sample_csv -> {
+                    downloadSampleCsv()
+                    true
+                }
+                R.id.action_import_csv -> {
+                    launchCsvPicker()
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
+    private fun downloadSampleCsv() {
+        try {
+            val sampleFile = CsvImporter.generateSampleCsv(this)
+            Toast.makeText(this, "Sample CSV template downloaded", Toast.LENGTH_SHORT).show()
+            CsvImporter.openOrShareSampleCsv(this, sampleFile)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to download sample CSV: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun showExportMenu(anchorView: View) {

@@ -1,10 +1,15 @@
 package com.expensetracker.app
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import androidx.core.content.FileProvider
 import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -308,4 +313,49 @@ object CsvImporter {
 
         return System.currentTimeMillis()
     }
+
+    fun getSampleCsvTemplateContent(): String {
+        return """
+            Date,Description,Category,Payment Method,Amount,Notes
+            2026-10-16,Morning Coffee & Snacks,Food & Dining,UPI,150.00,Starbucks coffee
+            2026-10-15,Supermarket Groceries,Groceries,Card,1250.50,Weekly vegetables and fruits
+            2026-10-14,Fuel & Petrol,Transportation,Cash,500.00,Vehicle refill
+            2026-10-12,Electricity & Utility Bill,Bills & Utilities,Net Banking,820.00,Monthly power bill
+            2026-10-10,Weekend Movie Tickets,Entertainment,Card,450.00,Cinema with friends
+            2026-10-08,Pharmacy Medicines,Health,UPI,240.00,Vitamins and cough syrup
+        """.trimIndent()
+    }
+
+    fun generateSampleCsv(context: Context): File {
+        val samplesDir = File(context.cacheDir, "reports")
+        if (!samplesDir.exists()) samplesDir.mkdirs()
+
+        val file = File(samplesDir, "Sample_Expense_Import_Template.csv")
+        FileOutputStream(file).use { fos ->
+            OutputStreamWriter(fos, StandardCharsets.UTF_8).use { writer ->
+                // Write UTF-8 BOM so spreadsheet viewers render characters cleanly
+                writer.write("\uFEFF")
+                writer.write(getSampleCsvTemplateContent())
+                writer.write("\n")
+            }
+        }
+        return file
+    }
+
+    fun openOrShareSampleCsv(context: Context, file: File) {
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/csv"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_SUBJECT, "Sample Expense Import Template (CSV)")
+            putExtra(Intent.EXTRA_TEXT, "Here is the sample CSV template format for importing expenses into Expense Tracker.")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(intent, "Download or Share Sample CSV"))
+    }
 }
+

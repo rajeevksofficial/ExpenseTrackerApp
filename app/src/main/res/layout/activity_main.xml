@@ -55,12 +55,12 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/bg_card"
                 android:clickable="true"
-                android:contentDescription="Import CSV"
+                android:contentDescription="Import CSV / Sample Template"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:src="@drawable/ic_import"
-                android:tooltipText="Import CSV" />
+                android:tooltipText="Import CSV / Sample Template" />
 
             <!-- Export Menu Icon Button -->
             <ImageView

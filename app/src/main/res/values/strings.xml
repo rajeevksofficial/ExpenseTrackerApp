@@ -31,4 +31,6 @@
     <string name="export_success">Report generated successfully</string>
     <string name="monthly_spending_title">Month-wise Spending</string>
     <string name="no_expenses_month">No expenses</string>
+    <string name="action_download_sample_csv">Sample CSV Download</string>
+    <string name="action_import_csv">Import CSV</string>
 </resources>
