@@ -21,10 +21,11 @@
 
         <!-- Amount Input -->
         <TextView
+            android:id="@+id/tvLabelAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Amount ($)"
+            android:text="Amount"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:textStyle="bold" />

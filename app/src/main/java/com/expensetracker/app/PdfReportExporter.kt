@@ -60,6 +60,7 @@ object PdfReportExporter {
         y = 115f
 
         // 2. Summary Box
+        val currencySymbol = CurrencyManager.getCurrencySymbol(context)
         val totalSpent = expenses.sumOf { it.amount }
         paint.color = lightBg
         canvas.drawRoundRect(36f, y, 559f, y + 65f, 12f, 12f, paint)
@@ -74,7 +75,7 @@ object PdfReportExporter {
         paint.textSize = 18f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         paint.color = primaryColor
-        canvas.drawText(String.format(Locale.US, "$%.2f", totalSpent), 54f, y + 50f, paint)
+        canvas.drawText(String.format(Locale.US, "%s%.2f", currencySymbol, totalSpent), 54f, y + 50f, paint)
 
         paint.color = darkColor
         canvas.drawText("${expenses.size}", 240f, y + 50f, paint)
@@ -106,7 +107,7 @@ object PdfReportExporter {
         paint.color = darkColor
         for (cat in categorySummaries.take(5)) {
             canvas.drawText(cat.category, 40f, y, paint)
-            canvas.drawText(String.format(Locale.US, "$%.2f", cat.totalAmount), 240f, y, paint)
+            canvas.drawText(String.format(Locale.US, "%s%.2f", currencySymbol, cat.totalAmount), 240f, y, paint)
             canvas.drawText(String.format(Locale.US, "%.1f%%", cat.percentage), 360f, y, paint)
             y += 16f
         }
@@ -157,7 +158,7 @@ object PdfReportExporter {
             paint.color = primaryColor
             paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             paint.textAlign = Paint.Align.RIGHT
-            canvas.drawText(String.format(Locale.US, "$%.2f", exp.amount), 551f, y, paint)
+            canvas.drawText(String.format(Locale.US, "%s%.2f", currencySymbol, exp.amount), 551f, y, paint)
             paint.textAlign = Paint.Align.LEFT
             paint.typeface = Typeface.DEFAULT
 

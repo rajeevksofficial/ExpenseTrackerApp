@@ -29,46 +29,67 @@
                 android:src="@drawable/ic_wallet_header" />
 
             <TextView
+                android:id="@+id/tvAppTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:text="@string/app_name"
                 android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="19sp"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
 
-            <!-- Export Buttons -->
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnExportPdf"
-                android:layout_width="wrap_content"
+            <!-- Import CSV Icon Button -->
+            <ImageView
+                android:id="@+id/btnImportCsv"
+                android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/bg_card"
-                android:drawableStart="@drawable/ic_pdf"
-                android:drawablePadding="6dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="12dp"
-                android:stateListAnimator="@null"
-                android:text="PDF"
-                android:textColor="@color/text_primary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:clickable="true"
+                android:contentDescription="Import CSV"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/ic_import"
+                android:tooltipText="Import CSV" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnExportExcel"
-                android:layout_width="wrap_content"
+            <!-- Export Menu Icon Button -->
+            <ImageView
+                android:id="@+id/btnExport"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_card"
+                android:clickable="true"
+                android:contentDescription="Export (PDF / Excel)"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/ic_export"
+                android:tooltipText="Export (PDF / Excel)" />
+
+            <!-- Settings Button -->
+            <ImageView
+                android:id="@+id/btnSettings"
+                android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/bg_card"
-                android:drawableStart="@drawable/ic_excel"
-                android:drawablePadding="6dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="12dp"
-                android:stateListAnimator="@null"
-                android:text="Excel"
-                android:textColor="@color/text_primary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:clickable="true"
+                android:contentDescription="Settings"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/ic_settings"
+                android:tooltipText="Settings" />
         </LinearLayout>
 
         <!-- Period Segmented Tabs (Daily | Monthly | Yearly) -->
@@ -327,17 +348,44 @@
                         android:orientation="vertical" />
                 </LinearLayout>
 
-                <!-- Transactions Header -->
-                <TextView
-                    android:id="@+id/tvTransactionsHeader"
-                    android:layout_width="wrap_content"
+                <!-- Transactions Header Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/recent_transactions"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvTransactionsHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/recent_transactions"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnToggleGroupView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_month_badge_active"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
+                        android:text="Grouped by Date"
+                        android:textColor="@color/primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </LinearLayout>
 
                 <!-- Transactions List -->
                 <androidx.recyclerview.widget.RecyclerView
@@ -378,6 +426,23 @@
                         android:text="@string/add_your_first"
                         android:textColor="@color/text_muted"
                         android:textSize="13sp" />
+
+                    <!-- Quick Action: Import CSV in Empty State -->
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnEmptyImportCsv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_card"
+                        android:drawableStart="@drawable/ic_import"
+                        android:drawablePadding="6dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="14dp"
+                        android:stateListAnimator="@null"
+                        android:text="Import from CSV"
+                        android:textColor="@color/primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
             </LinearLayout>

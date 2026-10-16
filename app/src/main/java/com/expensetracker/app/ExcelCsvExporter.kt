@@ -26,6 +26,7 @@ object ExcelCsvExporter {
         val file = File(reportsDir, fileName)
 
         val totalSpent = expenses.sumOf { it.amount }
+        val currencySymbol = CurrencyManager.getCurrencySymbol(context)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
         val genFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -44,7 +45,7 @@ object ExcelCsvExporter {
 
                 // 2. Category Summary Table
                 writer.write("--- CATEGORY BREAKDOWN SUMMARY ---\n")
-                writer.write("Category,Amount ($),Share (%)\n")
+                writer.write("Category,Amount ($currencySymbol),Share (%)\n")
                 for (cat in categorySummaries) {
                     writer.write("\"${cat.category}\",${String.format(Locale.US, "%.2f", cat.totalAmount)},${String.format(Locale.US, "%.2f%%", cat.percentage)}\n")
                 }
@@ -52,7 +53,7 @@ object ExcelCsvExporter {
 
                 // 3. Itemized Transactions Table
                 writer.write("--- ITEMIZED TRANSACTIONS ---\n")
-                writer.write("ID,Date,Time,Description,Category,Payment Method,Amount ($),Notes\n")
+                writer.write("ID,Date,Time,Description,Category,Payment Method,Amount ($currencySymbol),Notes\n")
 
                 for (exp in expenses) {
                     val d = Date(exp.date)

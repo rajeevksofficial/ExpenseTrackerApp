@@ -10,6 +10,19 @@ data class Expense(
     val notes: String = ""
 )
 
+sealed class TransactionListItem {
+    data class DateHeader(
+        val dateTitle: String,
+        val count: Int,
+        val totalAmount: Double
+    ) : TransactionListItem()
+
+    data class ExpenseItem(
+        val expense: Expense,
+        val isGrouped: Boolean = false
+    ) : TransactionListItem()
+}
+
 data class CategorySummary(
     val category: String,
     val totalAmount: Double,

@@ -154,4 +154,69 @@ class ExpenseModelTest {
         assertEquals(300.0, monthSummary.totalAmount, 0.001)
         assertEquals(2, monthSummary.transactionCount)
     }
+
+    @Test
+    fun testCurrencyFormatting() {
+        assertEquals("$45.50", CurrencyManager.formatAmountWithSymbol("$", 45.50))
+        assertEquals("₹45.50", CurrencyManager.formatAmountWithSymbol("₹", 45.50))
+        assertEquals("-$45.50", String.format(Locale.US, "-%s%.2f", "$", 45.50))
+        assertEquals("-₹45.50", String.format(Locale.US, "-%s%.2f", "₹", 45.50))
+    }
+
+    @Test
+    fun testCsvImporterStandardCsv() {
+        val csv = """
+            Date,Description,Category,Payment Method,Amount,Notes
+            2026-10-16,Morning Coffee,Food & Dining,Card,$6.50,Downtown bakery
+            2026-10-15,"Grocery, Market",Groceries,UPI,"₹64.80","Fresh veggies, milk"
+        """.trimIndent()
+
+        val stream = java.io.ByteArrayInputStream(csv.toByteArray(Charsets.UTF_8))
+        val expenses = CsvImporter.parseCsvStream(stream)
+
+        assertEquals(2, expenses.size)
+        assertEquals("Morning Coffee", expenses[0].title)
+        assertEquals(6.50, expenses[0].amount, 0.001)
+        assertEquals("Food & Dining", expenses[0].category)
+        assertEquals("Card", expenses[0].paymentMethod)
+        assertEquals("Downtown bakery", expenses[0].notes)
+
+        assertEquals("Grocery, Market", expenses[1].title)
+        assertEquals(64.80, expenses[1].amount, 0.001)
+        assertEquals("Groceries", expenses[1].category)
+        assertEquals("UPI", expenses[1].paymentMethod)
+        assertEquals("Fresh veggies, milk", expenses[1].notes)
+    }
+
+    @Test
+    fun testCsvImporterAppExportedFormat() {
+        val appExportCsv = """
+            EXPENSE TRACKER FINANCIAL REPORT
+            Report Period,October 2026
+            Generated On,2026-10-16 11:30:00
+            Total Expenditure,71.30
+            Total Transactions,2
+
+            --- CATEGORY BREAKDOWN SUMMARY ---
+            Category,Amount ($),Share (%)
+            "Groceries",64.80,90.88%
+            "Food & Dining",6.50,9.12%
+
+            --- ITEMIZED TRANSACTIONS ---
+            ID,Date,Time,Description,Category,Payment Method,Amount ($),Notes
+            1,"2026-10-16","08:30:00","Morning Coffee","Food & Dining","Card",6.50,"Downtown"
+            2,"2026-10-15","14:45:00","Supermarket","Groceries","UPI",64.80,"Dairy"
+            ,,,,Total,71.30,
+        """.trimIndent()
+
+        val stream = java.io.ByteArrayInputStream(appExportCsv.toByteArray(Charsets.UTF_8))
+        val expenses = CsvImporter.parseCsvStream(stream)
+
+        assertEquals(2, expenses.size)
+        assertEquals("Morning Coffee", expenses[0].title)
+        assertEquals(6.50, expenses[0].amount, 0.001)
+        assertEquals("Food & Dining", expenses[0].category)
+        assertEquals("Supermarket", expenses[1].title)
+        assertEquals(64.80, expenses[1].amount, 0.001)
+    }
 }

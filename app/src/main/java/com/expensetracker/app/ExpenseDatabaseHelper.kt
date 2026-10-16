@@ -58,6 +58,31 @@ class ExpenseDatabaseHelper(context: Context) :
         return db.insert(TABLE_EXPENSES, null, values)
     }
 
+    fun insertExpenses(expenses: List<Expense>): Int {
+        val db = writableDatabase
+        var count = 0
+        db.beginTransaction()
+        try {
+            for (expense in expenses) {
+                val values = ContentValues().apply {
+                    put(COL_TITLE, expense.title)
+                    put(COL_AMOUNT, expense.amount)
+                    put(COL_CATEGORY, expense.category)
+                    put(COL_DATE, expense.date)
+                    put(COL_PAYMENT_METHOD, expense.paymentMethod)
+                    put(COL_NOTES, expense.notes)
+                }
+                if (db.insert(TABLE_EXPENSES, null, values) != -1L) {
+                    count++
+                }
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+        return count
+    }
+
     fun updateExpense(expense: Expense): Boolean {
         val db = writableDatabase
         val values = ContentValues().apply {

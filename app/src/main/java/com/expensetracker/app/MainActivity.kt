@@ -8,12 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.expensetracker.app.databinding.ActivityMainBinding
 import com.expensetracker.app.databinding.DialogAddExpenseBinding
+import com.expensetracker.app.databinding.DialogSettingsBinding
 import com.expensetracker.app.databinding.ItemCategorySummaryBinding
 import com.expensetracker.app.databinding.ItemMonthSummaryBinding
 import java.text.SimpleDateFormat
@@ -26,6 +30,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var dbHelper: ExpenseDatabaseHelper
     private lateinit var expenseAdapter: ExpenseAdapter
+
+    private val importCsvLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        uri?.let { handleCsvImportUri(it) }
+    }
 
     private var currentPeriod = ViewPeriod.MONTHLY
     private val calendar = Calendar.getInstance()
@@ -59,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         expenseAdapter = ExpenseAdapter(
-            expenses = emptyList(),
+            currencySymbol = CurrencyManager.getCurrencySymbol(this),
             onEditClick = { expense ->
                 showAddOrEditExpenseDialog(expense)
             },
@@ -108,14 +118,31 @@ class MainActivity : AppCompatActivity() {
             navigatePeriod(1)
         }
 
-        // Export PDF
-        binding.btnExportPdf.setOnClickListener {
-            exportPdfReport()
+        // Export Menu Button (PDF & Excel)
+        binding.btnExport.setOnClickListener { view ->
+            showExportMenu(view)
         }
 
-        // Export Excel
-        binding.btnExportExcel.setOnClickListener {
-            exportExcelReport()
+        // Import CSV Button
+        binding.btnImportCsv.setOnClickListener {
+            launchCsvPicker()
+        }
+
+        // Quick Import CSV Button in Empty State
+        binding.btnEmptyImportCsv.setOnClickListener {
+            launchCsvPicker()
+        }
+
+        // Settings Button
+        binding.btnSettings.setOnClickListener {
+            showSettingsDialog()
+        }
+
+        // Monthly Group View Toggle
+        binding.btnToggleGroupView.setOnClickListener {
+            val current = CurrencyManager.isGroupByDateEnabled(this)
+            CurrencyManager.setGroupByDateEnabled(this, !current)
+            loadExpenses()
         }
 
         // Floating Action Button
@@ -229,14 +256,32 @@ class MainActivity : AppCompatActivity() {
         val expenses = dbHelper.getExpensesByDateRange(startTime, endTime)
         val summaries = dbHelper.getCategorySummary(startTime, endTime)
 
+        val currencySymbol = CurrencyManager.getCurrencySymbol(this)
         val totalAmount = expenses.sumOf { it.amount }
-        binding.tvTotalAmount.text = String.format(Locale.US, "$%.2f", totalAmount)
+        binding.tvTotalAmount.text = CurrencyManager.formatAmount(this, totalAmount)
         binding.tvTransactionCount.text = "${expenses.size} records"
 
         val topCategory = summaries.firstOrNull()?.category ?: "None"
         binding.tvTopCategory.text = topCategory
 
         binding.tvTransactionsHeader.text = "Transactions (${expenses.size})"
+
+        // Configure Group View Toggle Button in Monthly view
+        if (currentPeriod == ViewPeriod.MONTHLY && expenses.isNotEmpty()) {
+            binding.btnToggleGroupView.visibility = View.VISIBLE
+            val isGrouped = CurrencyManager.isGroupByDateEnabled(this)
+            if (isGrouped) {
+                binding.btnToggleGroupView.text = "Grouped by Date"
+                binding.btnToggleGroupView.setBackgroundResource(R.drawable.bg_month_badge_active)
+                binding.btnToggleGroupView.setTextColor(ContextCompat.getColor(this, R.color.primary))
+            } else {
+                binding.btnToggleGroupView.text = "Flat List"
+                binding.btnToggleGroupView.setBackgroundResource(R.drawable.bg_month_badge)
+                binding.btnToggleGroupView.setTextColor(ContextCompat.getColor(this, R.color.text_secondary))
+            }
+        } else {
+            binding.btnToggleGroupView.visibility = View.GONE
+        }
 
         // Populate Category Breakdown Cards
         binding.layoutCategoryList.removeAllViews()
@@ -250,7 +295,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 itemBinding.tvCategoryName.text = summary.category
                 itemBinding.tvCategoryPercent.text = String.format(Locale.US, "%.1f%%", summary.percentage)
-                itemBinding.tvCategoryAmount.text = String.format(Locale.US, "$%.2f", summary.totalAmount)
+                itemBinding.tvCategoryAmount.text = CurrencyManager.formatAmount(this, summary.totalAmount)
                 itemBinding.progressCategory.progress = summary.percentage.toInt()
 
                 val catColor = ExpenseAdapter.getCategoryColor(summary.category)
@@ -289,7 +334,7 @@ class MainActivity : AppCompatActivity() {
                     if (monthSummary.totalAmount > 0.0) {
                         itemBinding.tvMonthBadge.setBackgroundResource(R.drawable.bg_month_badge_active)
                         itemBinding.tvMonthBadge.setTextColor(ContextCompat.getColor(this, R.color.primary))
-                        itemBinding.tvMonthAmount.text = String.format(Locale.US, "$%.2f", monthSummary.totalAmount)
+                        itemBinding.tvMonthAmount.text = CurrencyManager.formatAmount(this, monthSummary.totalAmount)
                         itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
                         itemBinding.tvMonthPercent.text = String.format(Locale.US, "%.1f%%", monthSummary.percentage)
                         itemBinding.tvMonthCount.text = "${monthSummary.transactionCount} transaction${if (monthSummary.transactionCount > 1) "s" else ""}"
@@ -301,7 +346,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         itemBinding.tvMonthBadge.setBackgroundResource(R.drawable.bg_month_badge)
                         itemBinding.tvMonthBadge.setTextColor(ContextCompat.getColor(this, R.color.text_muted))
-                        itemBinding.tvMonthAmount.text = "$0.00"
+                        itemBinding.tvMonthAmount.text = CurrencyManager.formatAmount(this, 0.0)
                         itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this, R.color.text_muted))
                         itemBinding.tvMonthPercent.text = "0%"
                         itemBinding.tvMonthCount.text = getString(R.string.no_expenses_month)
@@ -332,7 +377,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             binding.layoutEmptyState.visibility = View.GONE
             binding.rvExpenses.visibility = View.VISIBLE
-            expenseAdapter.updateList(expenses)
+            val shouldGroup = (currentPeriod == ViewPeriod.MONTHLY && CurrencyManager.isGroupByDateEnabled(this))
+            expenseAdapter.updateList(expenses, groupByDate = shouldGroup, currency = currencySymbol)
         }
     }
 
@@ -356,6 +402,10 @@ class MainActivity : AppCompatActivity() {
         } else {
             getString(R.string.btn_save)
         }
+
+        // Set amount label with current currency
+        val currencySymbol = CurrencyManager.getCurrencySymbol(this)
+        dialogBinding.tvLabelAmount.text = "Amount ($currencySymbol)"
 
         // Setup Spinners
         val catAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categories)
@@ -625,5 +675,154 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Error generating Excel report: ${e.message}", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun showSettingsDialog() {
+        val dialogBinding = DialogSettingsBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        var selectedCurrency = CurrencyManager.getCurrencySymbol(this)
+        var isGroupEnabled = CurrencyManager.isGroupByDateEnabled(this)
+
+        fun updateCurrencyUI() {
+            if (selectedCurrency == CurrencyManager.CURRENCY_DOLLAR) {
+                dialogBinding.cardCurrencyDollar.setBackgroundResource(R.drawable.bg_card_selected)
+                dialogBinding.ivCheckDollar.visibility = View.VISIBLE
+                dialogBinding.cardCurrencyRupee.setBackgroundResource(R.drawable.bg_card)
+                dialogBinding.ivCheckRupee.visibility = View.GONE
+            } else {
+                dialogBinding.cardCurrencyDollar.setBackgroundResource(R.drawable.bg_card)
+                dialogBinding.ivCheckDollar.visibility = View.GONE
+                dialogBinding.cardCurrencyRupee.setBackgroundResource(R.drawable.bg_card_selected)
+                dialogBinding.ivCheckRupee.visibility = View.VISIBLE
+            }
+        }
+
+        updateCurrencyUI()
+
+        dialogBinding.cardCurrencyDollar.setOnClickListener {
+            selectedCurrency = CurrencyManager.CURRENCY_DOLLAR
+            updateCurrencyUI()
+        }
+
+        dialogBinding.cardCurrencyRupee.setOnClickListener {
+            selectedCurrency = CurrencyManager.CURRENCY_RUPEE
+            updateCurrencyUI()
+        }
+
+        dialogBinding.switchGroupByDate.isChecked = isGroupEnabled
+        dialogBinding.switchGroupByDate.setOnCheckedChangeListener { _, isChecked ->
+            isGroupEnabled = isChecked
+        }
+
+        dialogBinding.btnCloseSettings.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogBinding.cardSettingsImportCsv.setOnClickListener {
+            dialog.dismiss()
+            launchCsvPicker()
+        }
+
+        dialogBinding.btnApplySettings.setOnClickListener {
+            CurrencyManager.setCurrencySymbol(this, selectedCurrency)
+            CurrencyManager.setGroupByDateEnabled(this, isGroupEnabled)
+            dialog.dismiss()
+
+            loadExpenses()
+            val currencyName = if (selectedCurrency == CurrencyManager.CURRENCY_RUPEE) "Indian Rupee (₹)" else "US Dollar ($)"
+            Toast.makeText(this, "Currency set to $currencyName", Toast.LENGTH_SHORT).show()
+        }
+
+        dialog.show()
+    }
+
+    private fun showExportMenu(anchorView: View) {
+        val popup = PopupMenu(this, anchorView)
+        popup.menuInflater.inflate(R.menu.menu_export, popup.menu)
+        try {
+            val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+            fieldMPopup.isAccessible = true
+            val mPopup = fieldMPopup.get(popup)
+            mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java).invoke(mPopup, true)
+        } catch (_: Exception) {}
+
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_export_pdf -> {
+                    exportPdfReport()
+                    true
+                }
+                R.id.action_export_excel -> {
+                    exportExcelReport()
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
+    private fun launchCsvPicker() {
+        try {
+            importCsvLauncher.launch(
+                arrayOf(
+                    "text/csv",
+                    "text/comma-separated-values",
+                    "text/plain",
+                    "application/vnd.ms-excel",
+                    "application/csv",
+                    "*/*"
+                )
+            )
+        } catch (e: Exception) {
+            Toast.makeText(this, "Unable to launch file selector: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun handleCsvImportUri(uri: Uri) {
+        val result = CsvImporter.readAndParseCsv(this, uri)
+        result.fold(
+            onSuccess = { preview ->
+                showImportConfirmationDialog(preview)
+            },
+            onFailure = { error ->
+                AlertDialog.Builder(this)
+                    .setTitle("Import Failed")
+                    .setMessage(error.message ?: "Failed to read CSV file. Please make sure the file contains valid expense rows.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        )
+    }
+
+    private fun showImportConfirmationDialog(preview: CsvImporter.ImportPreview) {
+        val sb = StringBuilder()
+        sb.append("File: ${preview.fileName}\n")
+        sb.append("Total: ${preview.totalCount} transaction${if (preview.totalCount > 1) "s" else ""}\n")
+        sb.append("Total Amount: ${CurrencyManager.formatAmount(this, preview.totalAmount)}\n\n")
+        sb.append("Sample items:\n")
+        for (item in preview.sampleItems) {
+            sb.append("• ${item.title} — ${CurrencyManager.formatAmount(this, item.amount)} (${item.category})\n")
+        }
+        if (preview.totalCount > preview.sampleItems.size) {
+            sb.append("... and ${preview.totalCount - preview.sampleItems.size} more\n")
+        }
+        sb.append("\nDo you want to import these transactions into your records?")
+
+        AlertDialog.Builder(this)
+            .setTitle("Import CSV Transactions")
+            .setMessage(sb.toString())
+            .setPositiveButton("Import All (${preview.totalCount})") { _, _ ->
+                val count = dbHelper.insertExpenses(preview.expenses)
+                loadExpenses()
+                Toast.makeText(this, "Successfully imported $count transactions!", Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

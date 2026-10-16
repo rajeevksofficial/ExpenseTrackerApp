@@ -4,8 +4,10 @@
     <string name="title_monthly">Monthly</string>
     <string name="title_yearly">Yearly</string>
     <string name="btn_add_expense">Add Expense</string>
-    <string name="btn_export_pdf">Export PDF</string>
-    <string name="btn_export_excel">Export Excel (CSV)</string>
+    <string name="btn_export">Export</string>
+    <string name="btn_import">Import</string>
+    <string name="btn_export_pdf">Export as PDF</string>
+    <string name="btn_export_excel">Export as Excel (CSV)</string>
     <string name="total_expense">Total Spent</string>
     <string name="transaction_count">Transactions</string>
     <string name="top_category">Top Category</string>
@@ -16,7 +18,7 @@
     <string name="dialog_add_title">New Expense</string>
     <string name="dialog_edit_title">Edit Expense</string>
     <string name="hint_expense_title">What did you spend on? (e.g. Groceries)</string>
-    <string name="hint_amount">Amount ($)</string>
+    <string name="hint_amount">Amount</string>
     <string name="hint_notes">Optional Notes</string>
     <string name="label_category">Category</string>
     <string name="label_date">Date</string>

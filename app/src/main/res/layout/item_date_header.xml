@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp">
+
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="Date"
+        android:src="@drawable/ic_calendar"
+        app:tint="@color/primary" />
+
+    <TextView
+        android:id="@+id/tvDateHeaderTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        tools:text="Friday, 16 Oct 2026" />
+
+    <TextView
+        android:id="@+id/tvDateHeaderCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/text_muted"
+        android:textSize="11sp"
+        tools:text="3 items" />
+
+    <TextView
+        android:id="@+id/tvDateHeaderTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        tools:text="$96.30" />
+
+</LinearLayout>
