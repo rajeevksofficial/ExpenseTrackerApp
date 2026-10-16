@@ -6,19 +6,36 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 
 ## 📱 App Snapshots & Visual Tour
 
-| Main Screen (Rupee `₹` & Date Grouping) | Currency & Display Settings | Unified Export Menu |
+| Main Dashboard (Eye-Catching Categories & Transactions) | Month-wise Spending (Yearly Rainbow View & Top Month) | Currency & Display Settings |
 | :---: | :---: | :---: |
-| <img src="screenshots/expense_main.png" width="270" alt="Main Screen with Date Grouping and Rupee Currency" /> | <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> | <img src="screenshots/export_menu.png" width="270" alt="Export Popup Menu offering PDF and Excel" /> |
+| <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown and Transactions" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> | <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> |
 
-| Rupee Setting Selected | Add / Edit Expense Dialog | App Icon & Splash |
+| Unified Export Menu | Add / Edit Expense Dialog | Indian Rupee Selected |
 | :---: | :---: | :---: |
-| <img src="screenshots/settings_currency_rupee.png" width="270" alt="Indian Rupee Selected in Settings" /> | <img src="screenshots/add_expense_dialog.png" width="270" alt="Add Expense Modal Dialog" /> | <img src="screenshots/expense_running.png" width="270" alt="App Splash Screen" /> |
+| <img src="screenshots/export_menu.png" width="270" alt="Export Popup Menu offering PDF and Excel" /> | <img src="screenshots/add_expense_dialog.png" width="270" alt="Add Expense Modal Dialog" /> | <img src="screenshots/settings_currency_rupee.png" width="270" alt="Indian Rupee Selected in Settings" /> |
 
 ---
 
 ## 🚀 Key Features
 
-### 1. 💱 Multi-Currency Support (Dollar `$` & Rupee `₹`)
+### 1. 🎨 Vibrant, Eye-Catching Visual Hierarchy
+- **Category Breakdown**:
+  - Signature emerald accent stripe.
+  - Vibrant circular category indicators (`Groceries` emerald green, `Bills` electric purple, `Entertainment` neon pink, `Transportation` sky blue, `Food` warm orange).
+  - Translucent percentage pill tags (`[ 37.4% ]`) color-matched to each category.
+  - Thicker 8dp progress bars with high-contrast tracks and category-specific progress tints.
+- **Month-wise Spending (Yearly View)**:
+  - Dynamic 12-month palette giving every month a distinct, vibrant color identity.
+  - Translucent squircle badges with colored borders and month abbreviation.
+  - Automatic `★ TOP SPENT` gold crown highlight for the highest-expenditure month of the year.
+  - Matching progress bars and interactive tap-to-drill-down month navigation.
+- **Modern Transactions Section**:
+  - 40×40dp squircle category avatars with 18% opacity tinted backgrounds, vibrant colored borders, and bold category initials (`G`, `T`, `F`, `B`, `E`).
+  - Color-matched category pill badges (`[ Groceries ]`, `[ Transportation ]`, etc.).
+  - High-visibility amount styling in vibrant rose-red (`-₹75.00`).
+  - Elegant date headers with calendar badges and daily spending total pills.
+
+### 2. 💱 Multi-Currency Support (Dollar `$` & Rupee `₹`)
 - Switch anytime between **US Dollar (`$`)** and **Indian Rupee (`₹`)** in **Settings**.
 - Preferences persist across app sessions via `SharedPreferences`.
 - Automatically formats all overview cards, transaction list items, category breakdown bars, expense input dialogs, generated PDF reports, and exported CSV sheets.

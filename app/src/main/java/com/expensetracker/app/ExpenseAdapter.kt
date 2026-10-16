@@ -130,6 +130,7 @@ class ExpenseAdapter(
 
         fun bind(item: TransactionListItem.ExpenseItem) {
             val expense = item.expense
+            val context = binding.root.context
             binding.tvExpenseTitle.text = expense.title
             binding.tvExpenseCategory.text = expense.category
 
@@ -143,13 +144,27 @@ class ExpenseAdapter(
 
             binding.tvExpenseAmount.text = String.format(Locale.US, "-%s%.2f", currencySymbol, expense.amount)
 
-            // Category indicator badge color
             val catColor = getCategoryColor(expense.category)
-            val drawable = GradientDrawable().apply {
-                shape = GradientDrawable.OVAL
-                setColor(catColor)
+
+            // Category avatar squircle with 18% opacity tinted background, border, and colored initial
+            val avatarBg = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = dpToPx(context, 12f)
+                setColor(getTintedColor(catColor, 0.18f))
+                setStroke(dpToPx(context, 1.5f).toInt(), catColor)
             }
-            binding.viewCategoryColor.background = drawable
+            binding.layoutCategoryAvatar.background = avatarBg
+            binding.tvCategoryInitial.text = getCategoryInitial(expense.category)
+            binding.tvCategoryInitial.setTextColor(catColor)
+
+            // Category pill badge
+            val pillBg = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = dpToPx(context, 6f)
+                setColor(getTintedColor(catColor, 0.16f))
+            }
+            binding.tvExpenseCategory.background = pillBg
+            binding.tvExpenseCategory.setTextColor(catColor)
 
             binding.root.setOnClickListener {
                 onEditClick(expense)
@@ -169,16 +184,40 @@ class ExpenseAdapter(
         private const val VIEW_TYPE_HEADER = 0
         private const val VIEW_TYPE_EXPENSE = 1
 
+        fun dpToPx(context: android.content.Context, dp: Float): Float = dp * context.resources.displayMetrics.density
+
+        fun getTintedColor(color: Int, alphaPercent: Float): Int {
+            val alpha = (255 * alphaPercent).toInt().coerceIn(0, 255)
+            return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
+        }
+
         fun getCategoryColor(category: String): Int {
-            return when (category.lowercase(Locale.ROOT)) {
-                "food & dining", "food", "dining" -> Color.parseColor("#F59E0B")
-                "transportation", "transport", "fuel", "uber" -> Color.parseColor("#3B82F6")
-                "groceries", "market" -> Color.parseColor("#10B981")
-                "bills & utilities", "bills", "utilities" -> Color.parseColor("#8B5CF6")
-                "entertainment", "movies", "games" -> Color.parseColor("#06B6D4")
-                "health", "medical", "pharmacy" -> Color.parseColor("#EF4444")
-                "shopping", "clothes" -> Color.parseColor("#EC4899")
-                else -> Color.parseColor("#64748B")
+            val lower = category.lowercase(Locale.ROOT)
+            return when {
+                lower.contains("grocer") || lower.contains("market") -> Color.parseColor("#10B981") // Vibrant Emerald Green
+                lower.contains("food") || lower.contains("dining") || lower.contains("restaurant") || lower.contains("cafe") -> Color.parseColor("#FF9F1C") // Vibrant Amber-Orange
+                lower.contains("transport") || lower.contains("fuel") || lower.contains("uber") || lower.contains("metro") -> Color.parseColor("#0EA5E9") // Electric Sky Blue
+                lower.contains("bill") || lower.contains("utilit") || lower.contains("electric") || lower.contains("internet") -> Color.parseColor("#A855F7") // Electric Purple
+                lower.contains("entertain") || lower.contains("movie") || lower.contains("game") -> Color.parseColor("#EC4899") // Neon Pink
+                lower.contains("health") || lower.contains("medic") || lower.contains("pharm") -> Color.parseColor("#EF4444") // Coral Red
+                lower.contains("shop") || lower.contains("cloth") -> Color.parseColor("#F59E0B") // Golden Amber
+                else -> Color.parseColor("#6366F1") // Electric Indigo
+            }
+        }
+
+        fun getCategoryInitial(category: String): String {
+            val clean = category.trim()
+            val lower = clean.lowercase(Locale.ROOT)
+            return when {
+                lower.contains("grocer") -> "G"
+                lower.contains("food") || lower.contains("dining") -> "F"
+                lower.contains("transport") -> "T"
+                lower.contains("bill") || lower.contains("utilit") -> "B"
+                lower.contains("entertain") -> "E"
+                lower.contains("health") -> "H"
+                lower.contains("shop") -> "S"
+                clean.isNotEmpty() -> clean.first().uppercase()
+                else -> "•"
             }
         }
     }

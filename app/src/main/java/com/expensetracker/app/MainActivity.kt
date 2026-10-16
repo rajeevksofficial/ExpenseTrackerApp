@@ -3,6 +3,7 @@ package com.expensetracker.app
 import android.app.DatePickerDialog
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -249,6 +250,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getMonthColor(monthIndex: Int): Int {
+        return when (monthIndex % 12) {
+            0 -> Color.parseColor("#06B6D4") // Jan: Cyan
+            1 -> Color.parseColor("#EC4899") // Feb: Rose Pink
+            2 -> Color.parseColor("#10B981") // Mar: Emerald
+            3 -> Color.parseColor("#14B8A6") // Apr: Teal
+            4 -> Color.parseColor("#F59E0B") // May: Golden Amber
+            5 -> Color.parseColor("#F97316") // Jun: Sunset Orange
+            6 -> Color.parseColor("#E11D48") // Jul: Crimson Red
+            7 -> Color.parseColor("#6366F1") // Aug: Electric Indigo
+            8 -> Color.parseColor("#8B5CF6") // Sep: Vivid Violet
+            9 -> Color.parseColor("#A855F7") // Oct: Neon Purple
+            10 -> Color.parseColor("#3B82F6") // Nov: Royal Blue
+            11 -> Color.parseColor("#EF4444") // Dec: Coral Red
+            else -> Color.parseColor("#10B981")
+        }
+    }
+
     private fun loadExpenses() {
         val (startTime, endTime, periodTitle) = getDateRange()
         binding.tvCurrentPeriodTitle.text = periodTitle
@@ -293,12 +312,30 @@ class MainActivity : AppCompatActivity() {
                     binding.layoutCategoryList,
                     false
                 )
+                val catColor = ExpenseAdapter.getCategoryColor(summary.category)
+
                 itemBinding.tvCategoryName.text = summary.category
                 itemBinding.tvCategoryPercent.text = String.format(Locale.US, "%.1f%%", summary.percentage)
                 itemBinding.tvCategoryAmount.text = CurrencyManager.formatAmount(this, summary.totalAmount)
-                itemBinding.progressCategory.progress = summary.percentage.toInt()
+                itemBinding.progressCategory.progress = summary.percentage.toInt().coerceAtLeast(1)
 
-                val catColor = ExpenseAdapter.getCategoryColor(summary.category)
+                // Category indicator dot
+                val dotDrawable = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(catColor)
+                }
+                itemBinding.viewCategoryDot.background = dotDrawable
+
+                // Category percentage pill tag
+                val pillBg = GradientDrawable().apply {
+                    shape = GradientDrawable.RECTANGLE
+                    cornerRadius = ExpenseAdapter.dpToPx(this@MainActivity, 6f)
+                    setColor(ExpenseAdapter.getTintedColor(catColor, 0.16f))
+                }
+                itemBinding.tvCategoryPercent.background = pillBg
+                itemBinding.tvCategoryPercent.setTextColor(catColor)
+
+                // Progress bar tint
                 itemBinding.progressCategory.progressTintList = ColorStateList.valueOf(catColor)
 
                 binding.layoutCategoryList.addView(itemBinding.root)
@@ -328,29 +365,71 @@ class MainActivity : AppCompatActivity() {
                         false
                     )
 
+                    val monthColor = getMonthColor(monthSummary.monthIndex)
                     itemBinding.tvMonthBadge.text = monthSummary.monthShortName
                     itemBinding.tvMonthName.text = monthSummary.monthName
 
                     if (monthSummary.totalAmount > 0.0) {
-                        itemBinding.tvMonthBadge.setBackgroundResource(R.drawable.bg_month_badge_active)
-                        itemBinding.tvMonthBadge.setTextColor(ContextCompat.getColor(this, R.color.primary))
-                        itemBinding.tvMonthAmount.text = CurrencyManager.formatAmount(this, monthSummary.totalAmount)
-                        itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+                        // Highlight top spending month
+                        val isTopMonth = (monthSummary.totalAmount == maxMonthAmount && maxMonthAmount > 0.0 && activeMonthsCount > 1)
+                        if (isTopMonth) {
+                            itemBinding.tvMonthHighlight.visibility = View.VISIBLE
+                            val goldDrawable = GradientDrawable().apply {
+                                shape = GradientDrawable.RECTANGLE
+                                cornerRadius = ExpenseAdapter.dpToPx(this@MainActivity, 4f)
+                                setColor(Color.parseColor("#33FBBF24"))
+                                setStroke(ExpenseAdapter.dpToPx(this@MainActivity, 1f).toInt(), Color.parseColor("#FBBF24"))
+                            }
+                            itemBinding.tvMonthHighlight.background = goldDrawable
+                        } else {
+                            itemBinding.tvMonthHighlight.visibility = View.GONE
+                        }
+
+                        // Month Badge Pill with month-specific color and border
+                        val badgeBg = GradientDrawable().apply {
+                            shape = GradientDrawable.RECTANGLE
+                            cornerRadius = ExpenseAdapter.dpToPx(this@MainActivity, 12f)
+                            setColor(ExpenseAdapter.getTintedColor(monthColor, 0.18f))
+                            setStroke(ExpenseAdapter.dpToPx(this@MainActivity, 1.5f).toInt(), monthColor)
+                        }
+                        itemBinding.tvMonthBadge.background = badgeBg
+                        itemBinding.tvMonthBadge.setTextColor(monthColor)
+
+                        // Month Amount & Count
+                        itemBinding.tvMonthAmount.text = CurrencyManager.formatAmount(this@MainActivity, monthSummary.totalAmount)
+                        itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.text_primary))
+
+                        // Month Percentage Pill
                         itemBinding.tvMonthPercent.text = String.format(Locale.US, "%.1f%%", monthSummary.percentage)
+                        val pctBg = GradientDrawable().apply {
+                            shape = GradientDrawable.RECTANGLE
+                            cornerRadius = ExpenseAdapter.dpToPx(this@MainActivity, 6f)
+                            setColor(ExpenseAdapter.getTintedColor(monthColor, 0.16f))
+                        }
+                        itemBinding.tvMonthPercent.background = pctBg
+                        itemBinding.tvMonthPercent.setTextColor(monthColor)
+
                         itemBinding.tvMonthCount.text = "${monthSummary.transactionCount} transaction${if (monthSummary.transactionCount > 1) "s" else ""}"
+
                         val progressPct = ((monthSummary.totalAmount / maxMonthAmount) * 100).toInt().coerceIn(5, 100)
                         itemBinding.progressMonth.progress = progressPct
-                        itemBinding.progressMonth.progressTintList = ColorStateList.valueOf(
-                            ContextCompat.getColor(this, R.color.primary)
-                        )
+                        itemBinding.progressMonth.progressTintList = ColorStateList.valueOf(monthColor)
+
+                        itemBinding.ivMonthArrow.imageTintList = ColorStateList.valueOf(monthColor)
+                        itemBinding.ivMonthArrow.alpha = 0.85f
                     } else {
+                        itemBinding.tvMonthHighlight.visibility = View.GONE
                         itemBinding.tvMonthBadge.setBackgroundResource(R.drawable.bg_month_badge)
-                        itemBinding.tvMonthBadge.setTextColor(ContextCompat.getColor(this, R.color.text_muted))
-                        itemBinding.tvMonthAmount.text = CurrencyManager.formatAmount(this, 0.0)
-                        itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this, R.color.text_muted))
+                        itemBinding.tvMonthBadge.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.text_muted))
+                        itemBinding.tvMonthAmount.text = CurrencyManager.formatAmount(this@MainActivity, 0.0)
+                        itemBinding.tvMonthAmount.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.text_muted))
                         itemBinding.tvMonthPercent.text = "0%"
+                        itemBinding.tvMonthPercent.background = null
+                        itemBinding.tvMonthPercent.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.text_muted))
                         itemBinding.tvMonthCount.text = getString(R.string.no_expenses_month)
                         itemBinding.progressMonth.progress = 0
+                        itemBinding.ivMonthArrow.imageTintList = null
+                        itemBinding.ivMonthArrow.alpha = 0.25f
                     }
 
                     // Tapping any month switches view to that month in Monthly mode

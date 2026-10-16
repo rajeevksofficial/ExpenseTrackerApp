@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="12dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,6 +11,14 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
+        <!-- Category Color Indicator Dot -->
+        <View
+            android:id="@+id/viewCategoryDot"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_category_badge" />
 
         <TextView
             android:id="@+id/tvCategoryName"
@@ -27,8 +35,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:textColor="@color/text_muted"
-            android:textSize="12sp"
+            android:paddingStart="8dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="2dp"
+            android:textSize="11sp"
+            android:textStyle="bold"
             tools:text="24.1%" />
 
         <TextView
@@ -45,8 +57,8 @@
         android:id="@+id/progressCategory"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="6dp"
-        android:layout_marginTop="6dp"
+        android:layout_height="8dp"
+        android:layout_marginTop="8dp"
         android:max="100"
         android:progress="25"
         android:progressTint="@color/primary" />

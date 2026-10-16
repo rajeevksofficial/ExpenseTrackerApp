@@ -3,7 +3,7 @@
     <color name="primary">#10B981</color>
     <color name="primary_dark">#059669</color>
     <color name="primary_light">#34D399</color>
-    <color name="accent">#F43F5E</color>
+    <color name="accent">#FF4D6D</color>
     
     <color name="background">#0F172A</color>
     <color name="surface">#1E293B</color>
@@ -15,12 +15,17 @@
     <color name="text_muted">#64748B</color>
     <color name="white">#FFFFFF</color>
     
-    <!-- Category colors -->
-    <color name="cat_food">#F59E0B</color>
-    <color name="cat_transport">#3B82F6</color>
-    <color name="cat_shopping">#EC4899</color>
-    <color name="cat_bills">#8B5CF6</color>
-    <color name="cat_entertainment">#06B6D4</color>
+    <!-- Eye-catching Category colors -->
+    <color name="cat_food">#FF9F1C</color>
+    <color name="cat_groceries">#10B981</color>
+    <color name="cat_transport">#0EA5E9</color>
+    <color name="cat_bills">#A855F7</color>
+    <color name="cat_entertainment">#EC4899</color>
     <color name="cat_health">#EF4444</color>
-    <color name="cat_other">#6B7280</color>
+    <color name="cat_shopping">#F59E0B</color>
+    <color name="cat_other">#6366F1</color>
+    
+    <!-- Accent & Highlights -->
+    <color name="amount_expense">#FF4D6D</color>
+    <color name="gold_badge">#FBBF24</color>
 </resources>

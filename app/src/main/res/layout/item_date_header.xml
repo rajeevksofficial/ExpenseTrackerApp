@@ -11,13 +11,21 @@
     android:paddingStart="4dp"
     android:paddingEnd="4dp">
 
-    <ImageView
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginEnd="8dp"
-        android:contentDescription="Date"
-        android:src="@drawable/ic_calendar"
-        app:tint="@color/primary" />
+    <!-- Calendar Icon Pill -->
+    <FrameLayout
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_month_badge_active">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center"
+            android:contentDescription="Date"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/primary" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvDateHeaderTitle"
@@ -25,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@color/text_primary"
-        android:textSize="13sp"
+        android:textSize="13.5sp"
         android:textStyle="bold"
         tools:text="Friday, 16 Oct 2026" />
 
@@ -38,12 +46,18 @@
         android:textSize="11sp"
         tools:text="3 items" />
 
+    <!-- Daily Total Pill -->
     <TextView
         android:id="@+id/tvDateHeaderTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_month_badge_active"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="2dp"
         android:textColor="@color/primary"
-        android:textSize="13sp"
+        android:textSize="12.5sp"
         android:textStyle="bold"
         tools:text="$96.30" />
 
