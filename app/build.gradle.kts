@@ -45,3 +45,15 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
 }
+
+tasks.register<Copy>("copyApk") {
+    from(layout.buildDirectory.file("outputs/apk/debug/app-debug.apk"))
+    into(rootProject.file("apk"))
+    rename { "ExpenseTracker.apk" }
+}
+
+afterEvaluate {
+    tasks.findByName("assembleDebug")?.finalizedBy("copyApk")
+}
+
+

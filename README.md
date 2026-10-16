@@ -136,8 +136,9 @@ export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 ./gradlew assembleDebug
 ```
 
-The compiled APK will be generated at:
-`app/build/outputs/apk/debug/app-debug.apk`
+The compiled APK is automatically generated at:
+- **Direct Distribution**: `apk/ExpenseTracker.apk`
+- **Gradle Build Output**: `app/build/outputs/apk/debug/app-debug.apk`
 
 ### Run Unit Tests
 
