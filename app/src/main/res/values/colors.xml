@@ -28,4 +28,9 @@
     <!-- Accent & Highlights -->
     <color name="amount_expense">#FF4D6D</color>
     <color name="gold_badge">#FBBF24</color>
+    
+    <!-- Eye-catching Section Header Font Colors -->
+    <color name="header_category_breakdown">#34D399</color>
+    <color name="header_transactions">#38BDF8</color>
+    <color name="header_monthly_spending">#C084FC</color>
 </resources>

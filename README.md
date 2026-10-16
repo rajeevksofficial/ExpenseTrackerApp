@@ -6,13 +6,13 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 
 ## 📱 App Snapshots & Visual Tour
 
-| Main Dashboard (Eye-Catching Categories & Transactions) | Month-wise Spending (Yearly Rainbow View & Top Month) | Currency & Display Settings |
+| Daily View (Vivid Headers) | Monthly Dashboard (Eye-Catching Categories & Transactions) | Month-wise Spending (Yearly Rainbow View & Top Month) |
 | :---: | :---: | :---: |
-| <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown and Transactions" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> | <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> |
+| <img src="screenshots/daily_view.png" width="270" alt="Daily View with Vivid Category Breakdown and Transactions Headers" /> | <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown and Transactions" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> |
 
-| Unified Export Menu | Add / Edit Expense Dialog | Indian Rupee Selected |
+| Currency & Display Settings | Unified Export Menu | Add / Edit Expense Dialog |
 | :---: | :---: | :---: |
-| <img src="screenshots/export_menu.png" width="270" alt="Export Popup Menu offering PDF and Excel" /> | <img src="screenshots/add_expense_dialog.png" width="270" alt="Add Expense Modal Dialog" /> | <img src="screenshots/settings_currency_rupee.png" width="270" alt="Indian Rupee Selected in Settings" /> |
+| <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> | <img src="screenshots/export_menu.png" width="270" alt="Export Popup Menu offering PDF and Excel" /> | <img src="screenshots/add_expense_dialog.png" width="270" alt="Add Expense Modal Dialog" /> |
 
 ---
 
