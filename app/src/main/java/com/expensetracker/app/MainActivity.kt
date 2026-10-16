@@ -278,6 +278,7 @@ class MainActivity : AppCompatActivity() {
         val currencySymbol = CurrencyManager.getCurrencySymbol(this)
         val totalAmount = expenses.sumOf { it.amount }
         binding.tvTotalAmount.text = CurrencyManager.formatAmount(this, totalAmount)
+        binding.tvTotalAmount.setTextColor(ContextCompat.getColor(this, R.color.total_spent_red))
         binding.tvTransactionCount.text = "${expenses.size} records"
 
         val topCategory = summaries.firstOrNull()?.category ?: "None"

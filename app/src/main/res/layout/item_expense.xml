@@ -113,8 +113,9 @@
             android:layout_marginTop="2dp"
             android:gravity="end"
             android:textAlignment="viewEnd"
-            android:textColor="@color/text_muted"
+            android:textColor="@color/transaction_date_yellow"
             android:textSize="11sp"
+            android:textStyle="bold"
             tools:text="09 Oct, 04:09 PM" />
 
         <!-- Edit & Delete Action Icons positioned below the Date -->

@@ -33,4 +33,8 @@
     <color name="header_category_breakdown">#34D399</color>
     <color name="header_transactions">#38BDF8</color>
     <color name="header_monthly_spending">#C084FC</color>
+
+    <!-- Total Spent Red & Transaction Date Yellow -->
+    <color name="total_spent_red">#EF4444</color>
+    <color name="transaction_date_yellow">#FACC15</color>
 </resources>

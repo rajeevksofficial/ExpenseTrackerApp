@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.expensetracker.app.databinding.ItemDateHeaderBinding
 import com.expensetracker.app.databinding.ItemExpenseBinding
@@ -119,9 +120,12 @@ class ExpenseAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(header: TransactionListItem.DateHeader) {
+            val context = binding.root.context
             binding.tvDateHeaderTitle.text = header.dateTitle
+            binding.tvDateHeaderTitle.setTextColor(ContextCompat.getColor(context, R.color.transaction_date_yellow))
             binding.tvDateHeaderCount.text = "${header.count} ${if (header.count == 1) "item" else "items"}"
             binding.tvDateHeaderTotal.text = String.format(Locale.US, "%s%.2f", currencySymbol, header.totalAmount)
+            binding.tvDateHeaderTotal.setTextColor(ContextCompat.getColor(context, R.color.total_spent_red))
         }
     }
 
@@ -140,6 +144,7 @@ class ExpenseAdapter(
             } else {
                 binding.tvExpenseDate.text = fullDateFormat.format(Date(expense.date))
             }
+            binding.tvExpenseDate.setTextColor(ContextCompat.getColor(context, R.color.transaction_date_yellow))
 
             binding.tvExpenseAmount.text = String.format(Locale.US, "-%s%.2f", currencySymbol, expense.amount)
 

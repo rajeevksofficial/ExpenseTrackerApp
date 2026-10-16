@@ -33,12 +33,16 @@ A modern, offline-first personal finance Android application built in **Kotlin**
   - Translucent squircle badges with colored borders and month abbreviation.
   - Automatic `★ TOP SPENT` gold crown highlight for the highest-expenditure month of the year.
   - Matching progress bars and interactive tap-to-drill-down month navigation.
+- **Overview Card & Totals**:
+  - **Bold Red Total Spent**: The numeric total expenditure amount (`tvTotalAmount`) is rendered in vibrant, high-contrast **Red** (`#EF4444`) across all **Daily**, **Monthly**, and **Yearly** views for instant financial awareness.
+  - Category breakdown totals and metrics rows.
 - **Modern Transactions Section**:
   - **Clean Dual-Column Layout**: Category pill badges (`[ Groceries ]`, `[ Transportation ]`, etc.) and payment method badges (`[ 💳 Card ]`, `[ ⚡ UPI ]`, `[ 💵 Cash ]`, `[ 🏦 Net Banking ]`) neatly aligned side-by-side on the left side under the title.
-  - **Flush Right-Justified Financials**: Expense amounts (`-₹75.00`, `-₹25.00`) are bold and right-justified against the card edge, with cleanly formatted date/time stamps directly underneath.
+  - **Flush Right-Justified Financials**: Expense amounts (`-₹75.00`, `-₹25.00`) are bold and right-justified against the card edge.
+  - **Vibrant Yellow Transaction Dates**: Transaction timestamps (`tvExpenseDate`) and date headers (`tvDateHeaderTitle`) are styled in bright, radiant **Yellow** (`#FACC15`) across **Daily**, **Monthly**, and **Yearly** views for effortless date tracking.
   - **Direct Quick Actions**: Edit (`✎`) and Delete (`🗑`) action icons positioned cleanly below the date/time on each transaction record for fast 1-tap operations, while the Edit Expense dialog focuses purely on editing.
   - **40×40dp Squircle Avatars**: 18% opacity tinted backgrounds, vibrant category borders, and bold category initials (`G`, `T`, `F`, `B`, `E`).
-  - **Elegant Date Headers**: Daily spending total badges and transaction counts.
+  - **Elegant Date Headers**: Daily spending total badges in red and calendar indicator in yellow.
 
 ### 2. 💱 Multi-Currency Support (Dollar `$` & Rupee `₹`)
 - Switch anytime between **US Dollar (`$`)** and **Indian Rupee (`₹`)** in **Settings**.

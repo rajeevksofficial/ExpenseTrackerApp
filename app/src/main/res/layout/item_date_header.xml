@@ -16,7 +16,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_marginEnd="10dp"
-        android:background="@drawable/bg_month_badge_active">
+        android:background="@drawable/bg_calendar_badge">
 
         <ImageView
             android:layout_width="14dp"
@@ -24,7 +24,7 @@
             android:layout_gravity="center"
             android:contentDescription="Date"
             android:src="@drawable/ic_calendar"
-            app:tint="@color/primary" />
+            app:tint="@color/transaction_date_yellow" />
     </FrameLayout>
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/text_primary"
+        android:textColor="@color/transaction_date_yellow"
         android:textSize="13.5sp"
         android:textStyle="bold"
         tools:text="Friday, 16 Oct 2026" />
@@ -51,12 +51,12 @@
         android:id="@+id/tvDateHeaderTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_month_badge_active"
+        android:background="@drawable/bg_total_spent_badge"
         android:paddingStart="8dp"
         android:paddingTop="2dp"
         android:paddingEnd="8dp"
         android:paddingBottom="2dp"
-        android:textColor="@color/primary"
+        android:textColor="@color/total_spent_red"
         android:textSize="12.5sp"
         android:textStyle="bold"
         tools:text="$96.30" />
