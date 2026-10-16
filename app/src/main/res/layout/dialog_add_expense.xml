@@ -184,22 +184,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
+            android:gravity="end"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnDeleteExpenseDialog"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_delete"
-                android:textColor="@color/amount_expense"
-                android:visibility="gone" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btnCancelExpense"

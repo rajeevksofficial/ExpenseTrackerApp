@@ -17,7 +17,7 @@
         android:id="@+id/layoutCategoryAvatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/bg_month_badge">
 
         <TextView
@@ -52,7 +52,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -87,11 +87,11 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Right Side: Amount & Date (Right Justified) -->
+    <!-- Right Side: Amount, Date, and Action Icons below Date (Right Aligned) -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="10dp"
         android:gravity="end|center_vertical"
         android:orientation="vertical">
 
@@ -102,7 +102,7 @@
             android:gravity="end"
             android:textAlignment="viewEnd"
             android:textColor="@color/amount_expense"
-            android:textSize="16sp"
+            android:textSize="15.5sp"
             android:textStyle="bold"
             tools:text="-$64.80" />
 
@@ -110,12 +110,40 @@
             android:id="@+id/tvExpenseDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:gravity="end"
             android:textAlignment="viewEnd"
             android:textColor="@color/text_muted"
-            android:textSize="11.5sp"
+            android:textSize="11sp"
             tools:text="09 Oct, 04:09 PM" />
+
+        <!-- Edit & Delete Action Icons positioned below the Date -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btnEditExpense"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Edit"
+                android:padding="3.5dp"
+                android:src="@drawable/ic_edit" />
+
+            <ImageView
+                android:id="@+id/btnDeleteExpense"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="4dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Delete"
+                android:padding="3.5dp"
+                android:src="@drawable/ic_delete" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

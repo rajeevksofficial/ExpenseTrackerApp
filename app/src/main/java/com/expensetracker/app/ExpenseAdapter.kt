@@ -169,6 +169,14 @@ class ExpenseAdapter(
                 onEditClick(expense)
             }
 
+            binding.btnEditExpense.setOnClickListener {
+                onEditClick(expense)
+            }
+
+            binding.btnDeleteExpense.setOnClickListener {
+                onDeleteClick(expense)
+            }
+
             binding.root.setOnLongClickListener {
                 onDeleteClick(expense)
                 true

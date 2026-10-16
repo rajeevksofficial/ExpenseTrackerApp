@@ -32,7 +32,7 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 - **Modern Transactions Section**:
   - **Clean Dual-Column Layout**: Category pill badges (`[ Groceries ]`, `[ Transportation ]`, etc.) and payment method badges (`[ 💳 Card ]`, `[ ⚡ UPI ]`, `[ 💵 Cash ]`, `[ 🏦 Net Banking ]`) neatly aligned side-by-side on the left side under the title.
   - **Flush Right-Justified Financials**: Expense amounts (`-₹75.00`, `-₹25.00`) are bold and right-justified against the card edge, with cleanly formatted date/time stamps directly underneath.
-  - **Uncluttered & Intuitive Actions**: Tapping any transaction opens the Edit Expense dialog (featuring a dedicated "Delete" action button), and long-pressing opens an instant confirmation to delete.
+  - **Direct Quick Actions**: Edit (`✎`) and Delete (`🗑`) action icons positioned cleanly below the date/time on each transaction record for fast 1-tap operations, while the Edit Expense dialog focuses purely on editing.
   - **40×40dp Squircle Avatars**: 18% opacity tinted backgrounds, vibrant category borders, and bold category initials (`G`, `T`, `F`, `B`, `E`).
   - **Elegant Date Headers**: Daily spending total badges and transaction counts.
 
