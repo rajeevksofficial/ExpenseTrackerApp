@@ -1,6 +1,7 @@
 package com.expensetracker.app
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -16,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import com.expensetracker.app.databinding.ActivityMainBinding
 import com.expensetracker.app.databinding.DialogAddExpenseBinding
 import com.expensetracker.app.databinding.DialogSettingsBinding
@@ -40,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private var currentPeriod = ViewPeriod.MONTHLY
     private val calendar = Calendar.getInstance()
+    private var currentPeriodExpenses: List<Expense> = emptyList()
 
     private val categories = arrayOf(
         "Food & Dining",
@@ -89,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         binding.tabDaily.setOnClickListener {
             if (currentPeriod != ViewPeriod.DAILY) {
                 currentPeriod = ViewPeriod.DAILY
+                binding.etSearchTransactions.text?.clear()
                 updateTabSelectionUI()
                 loadExpenses()
             }
@@ -97,6 +102,7 @@ class MainActivity : AppCompatActivity() {
         binding.tabMonthly.setOnClickListener {
             if (currentPeriod != ViewPeriod.MONTHLY) {
                 currentPeriod = ViewPeriod.MONTHLY
+                binding.etSearchTransactions.text?.clear()
                 updateTabSelectionUI()
                 loadExpenses()
             }
@@ -105,6 +111,7 @@ class MainActivity : AppCompatActivity() {
         binding.tabYearly.setOnClickListener {
             if (currentPeriod != ViewPeriod.YEARLY) {
                 currentPeriod = ViewPeriod.YEARLY
+                binding.etSearchTransactions.text?.clear()
                 updateTabSelectionUI()
                 loadExpenses()
             }
@@ -150,6 +157,25 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddExpense.setOnClickListener {
             showAddOrEditExpenseDialog(null)
         }
+
+        // Search text watcher
+        binding.etSearchTransactions.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterAndDisplayTransactions()
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // Clear Search Button
+        binding.btnClearSearch.setOnClickListener {
+            binding.etSearchTransactions.text?.clear()
+        }
+
+        // Reset Search Button in Empty Search State
+        binding.btnResetSearch.setOnClickListener {
+            binding.etSearchTransactions.text?.clear()
+        }
     }
 
     private fun navigatePeriod(direction: Int) {
@@ -158,6 +184,7 @@ class MainActivity : AppCompatActivity() {
             ViewPeriod.MONTHLY -> calendar.add(Calendar.MONTH, direction)
             ViewPeriod.YEARLY -> calendar.add(Calendar.YEAR, direction)
         }
+        binding.etSearchTransactions.text?.clear()
         loadExpenses()
     }
 
@@ -273,6 +300,7 @@ class MainActivity : AppCompatActivity() {
         binding.tvCurrentPeriodTitle.text = periodTitle
 
         val expenses = dbHelper.getExpensesByDateRange(startTime, endTime)
+        currentPeriodExpenses = expenses
         val summaries = dbHelper.getCategorySummary(startTime, endTime)
 
         val currencySymbol = CurrencyManager.getCurrencySymbol(this)
@@ -457,6 +485,7 @@ class MainActivity : AppCompatActivity() {
                     itemBinding.root.setOnClickListener {
                         calendar.set(Calendar.MONTH, monthSummary.monthIndex)
                         currentPeriod = ViewPeriod.MONTHLY
+                        binding.etSearchTransactions.text?.clear()
                         updateTabSelectionUI()
                         loadExpenses()
                     }
@@ -470,15 +499,55 @@ class MainActivity : AppCompatActivity() {
             binding.cardMonthlyBreakdown.visibility = View.GONE
         }
 
-        // Empty state vs RecyclerView
-        if (expenses.isEmpty()) {
+        filterAndDisplayTransactions()
+    }
+
+    private fun filterAndDisplayTransactions() {
+        val query = binding.etSearchTransactions.text?.toString()?.trim() ?: ""
+        val isSearchApplicable = (currentPeriod == ViewPeriod.MONTHLY || currentPeriod == ViewPeriod.YEARLY)
+
+        // Show/hide search input bar in Monthly & Yearly views
+        if (isSearchApplicable && currentPeriodExpenses.isNotEmpty()) {
+            binding.layoutTransactionSearch.visibility = View.VISIBLE
+        } else {
+            binding.layoutTransactionSearch.visibility = View.GONE
+        }
+
+        // Toggle clear 'X' icon
+        binding.btnClearSearch.visibility = if (query.isNotEmpty()) View.VISIBLE else View.GONE
+
+        // Filter transaction records
+        val filteredExpenses = if (isSearchApplicable && query.isNotEmpty()) {
+            currentPeriodExpenses.filter { matchesSearch(it, query) }
+        } else {
+            currentPeriodExpenses
+        }
+
+        // Update Transactions header count
+        if (isSearchApplicable && query.isNotEmpty()) {
+            binding.tvTransactionsHeader.text = "Transactions (${filteredExpenses.size} of ${currentPeriodExpenses.size})"
+        } else {
+            binding.tvTransactionsHeader.text = "Transactions (${currentPeriodExpenses.size})"
+        }
+
+        // Handle Empty state vs Search empty state vs RecyclerView
+        if (currentPeriodExpenses.isEmpty()) {
             binding.layoutEmptyState.visibility = View.VISIBLE
+            binding.layoutSearchEmptyState.visibility = View.GONE
+            binding.rvExpenses.visibility = View.GONE
+        } else if (filteredExpenses.isEmpty()) {
+            binding.layoutEmptyState.visibility = View.GONE
+            binding.layoutSearchEmptyState.visibility = View.VISIBLE
+            binding.tvSearchEmptyQuery.text = "No records match \"$query\""
             binding.rvExpenses.visibility = View.GONE
         } else {
             binding.layoutEmptyState.visibility = View.GONE
+            binding.layoutSearchEmptyState.visibility = View.GONE
             binding.rvExpenses.visibility = View.VISIBLE
+
+            val currencySymbol = CurrencyManager.getCurrencySymbol(this)
             val shouldGroup = (currentPeriod == ViewPeriod.MONTHLY && CurrencyManager.isGroupByDateEnabled(this))
-            expenseAdapter.updateList(expenses, groupByDate = shouldGroup, currency = currencySymbol)
+            expenseAdapter.updateList(filteredExpenses, groupByDate = shouldGroup, currency = currencySymbol)
         }
     }
 
@@ -960,5 +1029,19 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    companion object {
+        fun matchesSearch(expense: Expense, query: String): Boolean {
+            if (query.isBlank()) return true
+            val q = query.trim().lowercase(Locale.ROOT)
+            if (expense.title.lowercase(Locale.ROOT).contains(q)) return true
+            if (expense.category.lowercase(Locale.ROOT).contains(q)) return true
+            if (expense.notes.lowercase(Locale.ROOT).contains(q)) return true
+            if (expense.paymentMethod.lowercase(Locale.ROOT).contains(q)) return true
+            val amountStr = String.format(Locale.US, "%.2f", expense.amount)
+            if (amountStr.contains(q)) return true
+            return false
+        }
     }
 }

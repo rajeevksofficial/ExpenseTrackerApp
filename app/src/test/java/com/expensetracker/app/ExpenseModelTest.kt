@@ -297,6 +297,49 @@ class ExpenseModelTest {
         assertEquals(0.0, avgDay, 0.0001)
         assertEquals(0.0, avgMonth, 0.0001)
     }
+
+    @Test
+    fun testTransactionSearchFiltering() {
+        val expense = Expense(
+            id = 1,
+            title = "Morning Coffee & Croissant",
+            amount = 6.50,
+            category = "Food & Dining",
+            date = 1700000000000L,
+            paymentMethod = "Card",
+            notes = "Breakfast at French Bakery"
+        )
+
+        // Matching by title
+        assertTrue(MainActivity.matchesSearch(expense, "Coffee"))
+        assertTrue(MainActivity.matchesSearch(expense, "croissant"))
+
+        // Matching by category
+        assertTrue(MainActivity.matchesSearch(expense, "Food"))
+        assertTrue(MainActivity.matchesSearch(expense, "dining"))
+
+        // Matching by payment method
+        assertTrue(MainActivity.matchesSearch(expense, "card"))
+        assertTrue(MainActivity.matchesSearch(expense, "CARD"))
+
+        // Matching by notes
+        assertTrue(MainActivity.matchesSearch(expense, "Bakery"))
+        assertTrue(MainActivity.matchesSearch(expense, "breakfast"))
+
+        // Matching by amount
+        assertTrue(MainActivity.matchesSearch(expense, "6.50"))
+        assertTrue(MainActivity.matchesSearch(expense, "6.5"))
+
+        // Blank or whitespace query matches all
+        assertTrue(MainActivity.matchesSearch(expense, ""))
+        assertTrue(MainActivity.matchesSearch(expense, "   "))
+
+        // Non-matching query
+        assertFalse(MainActivity.matchesSearch(expense, "Metro"))
+        assertFalse(MainActivity.matchesSearch(expense, "UPI"))
+        assertFalse(MainActivity.matchesSearch(expense, "Transportation"))
+    }
 }
+
 
 

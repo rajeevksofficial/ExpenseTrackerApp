@@ -35,4 +35,9 @@
     <string name="action_import_csv">Import CSV</string>
     <string name="average_per_day">AVERAGE/DAY</string>
     <string name="average_per_month">AVERAGE/MONTH</string>
+
+    <!-- Search Transactions -->
+    <string name="hint_search_transactions">Search transactions (title, category, note...)</string>
+    <string name="no_matching_transactions">No matching transactions</string>
+    <string name="action_clear_search">Clear Search</string>
 </resources>

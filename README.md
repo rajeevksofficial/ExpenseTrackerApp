@@ -2,27 +2,49 @@
 
 A modern, offline-first personal finance Android application built in **Kotlin** and **Material Design 3**. Track daily expenses, visualize spending breakdowns across Daily, Monthly, and Yearly periods, group monthly transactions by date, configure your preferred currency (**Dollar `$`** or **Rupee `₹`**), and seamlessly import/export your financial data via **PDF** and **Excel (CSV)**.
 
+## 📥 Direct APK Download
+
+You can directly download and install the pre-built application APK:
+- 📱 **[Download ExpenseTracker.apk (v1.1 - Latest)](apk/ExpenseTracker.apk)** *(Size: ~5.9 MB)*
+  - **New**: Live Transaction Search in Monthly and Yearly views (title, category, notes, payment method, amount).
+  - **New**: Instant match counter header (`Transactions (X of Y)`) and date grouping recalculation.
+  - **New**: One-tap clear (`✕`) button and dedicated empty search state with Reset button.
+
 ---
 
 ## 📱 App Snapshots & Visual Tour
 
-| Daily View (Clean Dual-Column Transactions) | Monthly Dashboard (Right-Justified Financials) | Yearly View (Itemized Transactions) |
+| Monthly Search (Initial State) | Monthly Search Filtered ("Coffee") | Search Empty State & Reset |
 | :---: | :---: | :---: |
-| <img src="screenshots/daily_view.png" width="270" alt="Daily View with Clean Category and Payment Pills and Right-Justified Amounts" /> | <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown and Transactions" /> | <img src="screenshots/yearly_view_transactions.png" width="270" alt="Yearly View Itemized Transactions with Right-Justified Amounts and Clean Date/Payment Pills" /> |
+| <img src="screenshots/monthly_search.png" width="270" alt="Monthly View with Live Search Bar above Transactions" /> | <img src="screenshots/monthly_search_coffee.png" width="270" alt="Monthly View Filtered by Coffee showing 1 of 5 records" /> | <img src="screenshots/monthly_search_empty.png" width="270" alt="Search Empty State with Clear Search Action" /> |
+
+| Yearly Search Filtered ("Petrol") | Daily View (Clean Dual-Column Transactions) | Yearly View (Itemized Transactions) |
+| :---: | :---: | :---: |
+| <img src="screenshots/yearly_search_petrol.png" width="270" alt="Yearly View Filtered by Petrol showing 1 of 8 records" /> | <img src="screenshots/expense_main.png" width="270" alt="Main Dashboard with Eye-Catching Category Breakdown" /> | <img src="screenshots/yearly_view_transactions.png" width="270" alt="Yearly View Itemized Transactions with Right-Justified Amounts" /> |
 
 | Import CSV Menu (Sample Download & File Picker) | Export Menu (PDF & Excel CSV) | Currency & Display Settings |
 | :---: | :---: | :---: |
 | <img src="screenshots/import_menu.png" width="270" alt="Import Menu with Sample CSV Download and Import CSV" /> | <img src="screenshots/export_menu.png" width="270" alt="Export Menu with PDF and Excel CSV" /> | <img src="screenshots/settings_currency.png" width="270" alt="Settings Dialog with Dollar and Rupee options" /> |
 
-| Edit Expense (with Clean Action Icons) | Month-wise Spending (Yearly Rainbow View) | Sample CSV Share Sheet |
-| :---: | :---: | :---: |
-| <img src="screenshots/edit_expense_dialog.png" width="270" alt="Edit Expense Dialog with Delete option" /> | <img src="screenshots/monthly_spending_yearly_scrolled.png" width="270" alt="Month-wise Spending with Dynamic Colors and Top Spent Highlight" /> | <img src="screenshots/sample_csv_share.png" width="270" alt="Native Share Sheet for Sample CSV Import Template" /> |
-
 ---
 
 ## 🚀 Key Features
 
-### 1. 🎨 Vibrant, Eye-Catching Visual Hierarchy
+### 1. 🔍 Dynamic Transaction Search (Monthly & Yearly Views)
+- **Real-Time Filtering**: Clean, unobtrusive search bar directly integrated above the Transactions list in **Monthly** and **Yearly** views (cleanly hidden in Daily view where records are already narrowed to a single day).
+- **Multi-Field Matching**: Searches case-insensitively across:
+  - **Title** (e.g., `"Coffee"`, `"Internet"`, `"Petrol"`)
+  - **Category** (e.g., `"Food & Dining"`, `"Transportation"`, `"Groceries"`)
+  - **Notes** (e.g., `"Bakery"`, `"Recharge"`)
+  - **Payment Method** (e.g., `"UPI"`, `"Card"`, `"Cash"`, `"Net Banking"`)
+  - **Numeric Amount** (e.g., `"6.50"`, `"55.20"`)
+- **Dynamic Header Match Counter**: Transactions section header updates instantly as you type (e.g. `Transactions (1 of 5)` or `Transactions (1 of 8)`), showing both matched and total count.
+- **Smart Date Grouping Integration**: In Monthly view with date grouping active, filtered transactions seamlessly maintain their date groupings, and day header totals (`items count` and `sum`) recalculate dynamically for matched items only.
+- **1-Tap Clear (`✕`)**: Embedded vector clear icon appears when text is entered and clears the search in a single tap.
+- **Dedicated Empty Search State**: When no transaction matches the search query, displays an intuitive illustration, the exact search query feedback (`No records match "<query>"`), and a prominent **"Clear Search"** button to restore all records instantly.
+- **Automatic Query Reset**: Switching between tabs (Daily / Monthly / Yearly) or navigating between months/years automatically resets the search field to prevent stale filters.
+
+### 2. 🎨 Vibrant, Eye-Catching Visual Hierarchy
 - **Category Breakdown**:
   - Signature emerald accent stripe.
   - Vibrant circular category indicators (`Groceries` emerald green, `Bills` electric purple, `Entertainment` neon pink, `Transportation` sky blue, `Food & Dining` rich warm brown).
@@ -45,17 +67,17 @@ A modern, offline-first personal finance Android application built in **Kotlin**
   - **40×40dp Squircle Avatars**: 18% opacity tinted backgrounds, vibrant category borders, and bold category initials (`G`, `T`, `F`, `B`, `E`).
   - **Elegant Date Headers**: Daily spending total badges in red and calendar indicator in yellow.
 
-### 2. 💱 Multi-Currency Support (Dollar `$` & Rupee `₹`)
+### 3. 💱 Multi-Currency Support (Dollar `$` & Rupee `₹`)
 - Switch anytime between **US Dollar (`$`)** and **Indian Rupee (`₹`)** in **Settings**.
 - Preferences persist across app sessions via `SharedPreferences`.
 - Automatically formats all overview cards, transaction list items, category breakdown bars, expense input dialogs, generated PDF reports, and exported CSV sheets.
 
-### 3. 📅 Monthly Date Grouping with Daily Totals
+### 4. 📅 Monthly Date Grouping with Daily Totals
 - In **Monthly View**, transactions are automatically grouped under chronological date headers (e.g., `Friday, 09 Oct 2026`).
 - Each header displays the total number of transactions and the net sum spent on that specific day.
 - A quick **"Grouped by Date" / "Flat List"** toggle pill allows switching between grouped and standard chronological views on the fly.
 
-### 4. 📥 Unified Import Menu (Sample CSV Download & Import CSV)
+### 5. 📥 Unified Import Menu (Sample CSV Download & Import CSV)
 - Clean, dedicated **Import CSV** icon button in the top bar and quick action in empty state.
 - Anchored popup menu with vector icons:
   - **Sample CSV Download**: Instantly generates an RFC-4180 compliant CSV template (`Sample_Expense_Import_Template.csv`) with UTF-8 BOM and pre-populated sample rows across categories and payment methods, opening Android's native share/save sheet so users can easily view, download, or edit the template format.
@@ -65,21 +87,21 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 - **Preview & Confirmation**: Displays an import summary dialog (record count and total amount) before writing to the database.
 - **Atomic Batch Insertion**: Inserts records efficiently in a single SQLite transaction.
 
-### 5. 📤 Unified Export Menu (PDF & Excel CSV)
+### 6. 📤 Unified Export Menu (PDF & Excel CSV)
 - Dedicated **Export** icon button in the top bar.
 - Anchored popup menu provides:
   - **Export as PDF**: Produces a clean, formatted PDF financial report ready for printing, filing, or sharing.
   - **Export as Excel (CSV)**: Generates an RFC-4180-compliant CSV file compatible with Microsoft Excel, Google Sheets, and LibreOffice Calc.
 - Direct sharing via Android's native share sheet.
 
-### 6. 🎨 Modern, Compact Top Bar
+### 7. 🎨 Modern, Compact Top Bar
 - Minimalist top bar with intuitive icon-only buttons:
   - 📥 **Import CSV (with Sample Template Download)**
   - 📤 **Export (PDF / Excel)**
   - ⚙️ **Settings**
 - Strict single-line "Expense Tracker" title with dynamic auto-sizing to prevent truncation or wrapping on any screen size.
 
-### 7. 🔒 100% Offline & Private
+### 8. 🔒 100% Offline & Private
 - All data is stored locally in an embedded SQLite database (`expenses.db`).
 - Zero cloud dependencies, zero external tracking, zero analytics scripts.
 - Your financial data never leaves your device.
