@@ -25,7 +25,7 @@ A modern, offline-first personal finance Android application built in **Kotlin**
 ### 1. 🎨 Vibrant, Eye-Catching Visual Hierarchy
 - **Category Breakdown**:
   - Signature emerald accent stripe.
-  - Vibrant circular category indicators (`Groceries` emerald green, `Bills` electric purple, `Entertainment` neon pink, `Transportation` sky blue, `Food` warm orange).
+  - Vibrant circular category indicators (`Groceries` emerald green, `Bills` electric purple, `Entertainment` neon pink, `Transportation` sky blue, `Food & Dining` rich warm brown).
   - Translucent percentage pill tags (`[ 37.4% ]`) color-matched to each category.
   - Thicker 8dp progress bars with high-contrast tracks and category-specific progress tints.
 - **Month-wise Spending (Yearly View)**:

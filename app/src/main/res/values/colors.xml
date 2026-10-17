@@ -16,7 +16,7 @@
     <color name="white">#FFFFFF</color>
     
     <!-- Eye-catching Category colors -->
-    <color name="cat_food">#FF9F1C</color>
+    <color name="cat_food">#A86538</color>
     <color name="cat_groceries">#10B981</color>
     <color name="cat_transport">#0EA5E9</color>
     <color name="cat_bills">#A855F7</color>

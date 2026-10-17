@@ -204,7 +204,7 @@ class ExpenseAdapter(
             val lower = category.lowercase(Locale.ROOT)
             return when {
                 lower.contains("grocer") || lower.contains("market") -> Color.parseColor("#10B981") // Vibrant Emerald Green
-                lower.contains("food") || lower.contains("dining") || lower.contains("restaurant") || lower.contains("cafe") -> Color.parseColor("#FF9F1C") // Vibrant Amber-Orange
+                lower.contains("food") || lower.contains("dining") || lower.contains("restaurant") || lower.contains("cafe") -> Color.parseColor("#A86538") // Warm Cocoa Brown
                 lower.contains("transport") || lower.contains("fuel") || lower.contains("uber") || lower.contains("metro") -> Color.parseColor("#0EA5E9") // Electric Sky Blue
                 lower.contains("bill") || lower.contains("utilit") || lower.contains("electric") || lower.contains("internet") -> Color.parseColor("#A855F7") // Electric Purple
                 lower.contains("entertain") || lower.contains("movie") || lower.contains("game") -> Color.parseColor("#EC4899") // Neon Pink
