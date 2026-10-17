@@ -284,6 +284,26 @@ class MainActivity : AppCompatActivity() {
         val topCategory = summaries.firstOrNull()?.category ?: "None"
         binding.tvTopCategory.text = topCategory
 
+        // Configure Average Metric in Monthly (Average/Day) and Yearly (Average/Month)
+        when (currentPeriod) {
+            ViewPeriod.DAILY -> {
+                binding.layoutAverageMetric.visibility = View.GONE
+            }
+            ViewPeriod.MONTHLY -> {
+                binding.layoutAverageMetric.visibility = View.VISIBLE
+                binding.tvAverageLabel.text = getString(R.string.average_per_day)
+                val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                val avgPerDay = if (daysInMonth > 0) totalAmount / daysInMonth else 0.0
+                binding.tvAverageAmount.text = CurrencyManager.formatAmount(this, avgPerDay)
+            }
+            ViewPeriod.YEARLY -> {
+                binding.layoutAverageMetric.visibility = View.VISIBLE
+                binding.tvAverageLabel.text = getString(R.string.average_per_month)
+                val avgPerMonth = totalAmount / 12.0
+                binding.tvAverageAmount.text = CurrencyManager.formatAmount(this, avgPerMonth)
+            }
+        }
+
         binding.tvTransactionsHeader.text = "Transactions (${expenses.size})"
 
         // Configure Group View Toggle Button in Monthly view

@@ -257,5 +257,46 @@ class ExpenseModelTest {
         val totalExpected = 150.00 + 1250.50 + 500.00 + 820.00 + 450.00 + 240.00
         assertEquals(totalExpected, expenses.sumOf { it.amount }, 0.001)
     }
+
+    @Test
+    fun testMonthlyDailyAverageComputation() {
+        val totalMonthlySpent = 200.49
+        val daysInOctober = 31
+        val daysInSeptember = 30
+        val daysInFebruary = 28
+
+        val avgOctober = totalMonthlySpent / daysInOctober
+        assertEquals(6.4674, avgOctober, 0.001)
+        assertEquals("6.47", String.format(Locale.US, "%.2f", avgOctober))
+
+        val avgSeptember = 142.70 / daysInSeptember
+        assertEquals(4.7566, avgSeptember, 0.001)
+        assertEquals("4.76", String.format(Locale.US, "%.2f", avgSeptember))
+
+        val avgFebruary = 280.00 / daysInFebruary
+        assertEquals(10.0, avgFebruary, 0.001)
+    }
+
+    @Test
+    fun testYearlyMonthlyAverageComputation() {
+        val totalYearlySpent = 343.19
+        val monthsInYear = 12.0
+
+        val avgMonthly = totalYearlySpent / monthsInYear
+        assertEquals(28.599, avgMonthly, 0.001)
+        assertEquals("28.60", String.format(Locale.US, "%.2f", avgMonthly))
+    }
+
+    @Test
+    fun testZeroExpenseAverages() {
+        val zeroTotal = 0.0
+        val daysInMonth = 31
+        val avgDay = if (daysInMonth > 0) zeroTotal / daysInMonth else 0.0
+        val avgMonth = zeroTotal / 12.0
+
+        assertEquals(0.0, avgDay, 0.0001)
+        assertEquals(0.0, avgMonth, 0.0001)
+    }
 }
+
 

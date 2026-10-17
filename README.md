@@ -35,6 +35,7 @@ A modern, offline-first personal finance Android application built in **Kotlin**
   - Matching progress bars and interactive tap-to-drill-down month navigation.
 - **Overview Card & Totals**:
   - **Bold Red Total Spent**: The numeric total expenditure amount (`tvTotalAmount`) is rendered in vibrant, high-contrast **Red** (`#EF4444`) across all **Daily**, **Monthly**, and **Yearly** views for instant financial awareness.
+  - **Average/Day & Average/Month Spending Metrics**: Positioned neatly on the top-right of the Total Spent card, styled in the identical typography theme as `TRANSACTIONS` and `TOP CATEGORY` (bold muted sub-header with primary high-contrast amount). Automatically displays calculated daily average spending (`AVERAGE/DAY`) in **Monthly View**, and monthly average spending (`AVERAGE/MONTH`) in **Yearly View** (cleanly hidden in Daily view).
   - Category breakdown totals and metrics rows.
 - **Modern Transactions Section**:
   - **Clean Dual-Column Layout**: Category pill badges (`[ Groceries ]`, `[ Transportation ]`, etc.) and payment method badges (`[ 💳 Card ]`, `[ ⚡ UPI ]`, `[ 💵 Cash ]`, `[ 🏦 Net Banking ]`) neatly aligned side-by-side on the left side under the title.

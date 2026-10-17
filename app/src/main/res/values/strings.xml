@@ -33,4 +33,6 @@
     <string name="no_expenses_month">No expenses</string>
     <string name="action_download_sample_csv">Sample CSV Download</string>
     <string name="action_import_csv">Import CSV</string>
+    <string name="average_per_day">AVERAGE/DAY</string>
+    <string name="average_per_month">AVERAGE/MONTH</string>
 </resources>
