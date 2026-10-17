@@ -40,4 +40,31 @@
     <string name="hint_search_transactions">Search transactions (title, category, note...)</string>
     <string name="no_matching_transactions">No matching transactions</string>
     <string name="action_clear_search">Clear Search</string>
+
+    <!-- Security & Login Password -->
+    <string name="unlock_vault">Unlock Expense Tracker</string>
+    <string name="enter_pin">Enter your 4-digit Master PIN</string>
+    <string name="create_pin">Set Master PIN</string>
+    <string name="create_pin_subtitle">Choose a 4-digit Master PIN to protect your expenses</string>
+    <string name="confirm_pin">Confirm Master PIN</string>
+    <string name="confirm_pin_subtitle">Re-enter your 4-digit PIN to confirm</string>
+    <string name="pin_mismatch">PINs do not match. Please try again.</string>
+    <string name="pin_incorrect">Incorrect Master PIN. Please try again.</string>
+
+    <!-- Change Password Flow -->
+    <string name="change_master_pin">Change Login Password</string>
+    <string name="step_verify_current">Step 1 of 3: Verify Current Password</string>
+    <string name="step_enter_new">Step 2 of 3: Enter New Password</string>
+    <string name="step_confirm_new">Step 3 of 3: Confirm New Password</string>
+    <string name="enter_current_pin_title">Current Password</string>
+    <string name="enter_current_pin_desc">Enter your current 4-digit password to authorize changes</string>
+    <string name="enter_new_pin_title">New Password</string>
+    <string name="enter_new_pin_desc">Choose a new 4-digit Login Password</string>
+    <string name="confirm_new_pin_title">Confirm New Password</string>
+    <string name="confirm_new_pin_desc">Re-enter your new 4-digit password to confirm</string>
+    <string name="pin_same_as_current">New password must be different from current password.</string>
+    <string name="pin_changed_success">Login Password updated successfully!</string>
+    <string name="action_change_pin">Change Login Password</string>
+    <string name="reset_vault_title">Reset Password?</string>
+    <string name="reset_vault_desc">Resetting your Login Password will clear your authentication credentials and prompt you to set a new PIN. Your expense transactions will remain completely safe.</string>
 </resources>

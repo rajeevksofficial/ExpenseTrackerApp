@@ -60,6 +60,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!SecurityManager.isMasterPinSet(this)) {
+            val intent = Intent(this, AuthActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -301,9 +308,8 @@ class MainActivity : AppCompatActivity() {
 
         val expenses = dbHelper.getExpensesByDateRange(startTime, endTime)
         currentPeriodExpenses = expenses
-        val summaries = dbHelper.getCategorySummary(startTime, endTime)
+        val summaries = dbHelper.getCategorySummaryFromExpenses(expenses)
 
-        val currencySymbol = CurrencyManager.getCurrencySymbol(this)
         val totalAmount = expenses.sumOf { it.amount }
         binding.tvTotalAmount.text = CurrencyManager.formatAmount(this, totalAmount)
         binding.tvTotalAmount.setTextColor(ContextCompat.getColor(this, R.color.total_spent_red))
@@ -351,16 +357,27 @@ class MainActivity : AppCompatActivity() {
             binding.btnToggleGroupView.visibility = View.GONE
         }
 
-        // Populate Category Breakdown Cards
-        binding.layoutCategoryList.removeAllViews()
-        if (summaries.isNotEmpty()) {
+        // Populate Category Breakdown Cards (with View Recycling)
+        val neededCatCount = summaries.size
+        val currentCatChildCount = binding.layoutCategoryList.childCount
+        if (neededCatCount > 0) {
             binding.cardCategoryBreakdown.visibility = View.VISIBLE
-            for (summary in summaries) {
-                val itemBinding = ItemCategorySummaryBinding.inflate(
-                    layoutInflater,
-                    binding.layoutCategoryList,
-                    false
-                )
+            if (currentCatChildCount > neededCatCount) {
+                binding.layoutCategoryList.removeViews(neededCatCount, currentCatChildCount - neededCatCount)
+            }
+            for (i in 0 until neededCatCount) {
+                val summary = summaries[i]
+                val itemBinding = if (i < currentCatChildCount) {
+                    ItemCategorySummaryBinding.bind(binding.layoutCategoryList.getChildAt(i))
+                } else {
+                    val inflated = ItemCategorySummaryBinding.inflate(
+                        layoutInflater,
+                        binding.layoutCategoryList,
+                        false
+                    )
+                    binding.layoutCategoryList.addView(inflated.root)
+                    inflated
+                }
                 val catColor = ExpenseAdapter.getCategoryColor(summary.category)
 
                 itemBinding.tvCategoryName.text = summary.category
@@ -386,18 +403,16 @@ class MainActivity : AppCompatActivity() {
 
                 // Progress bar tint
                 itemBinding.progressCategory.progressTintList = ColorStateList.valueOf(catColor)
-
-                binding.layoutCategoryList.addView(itemBinding.root)
             }
         } else {
+            binding.layoutCategoryList.removeAllViews()
             binding.cardCategoryBreakdown.visibility = View.GONE
         }
 
-        // Populate Month-wise Total Amount Spent Card (in Yearly View)
-        binding.layoutMonthlyList.removeAllViews()
+        // Populate Month-wise Total Amount Spent Card (in Yearly View with View Recycling)
         if (currentPeriod == ViewPeriod.YEARLY) {
             val year = calendar.get(Calendar.YEAR)
-            val monthlySummaries = dbHelper.getMonthlySummaryForYear(year)
+            val monthlySummaries = dbHelper.getMonthlySummaryForYear(year, expenses)
             val hasYearlyExpenses = monthlySummaries.any { it.totalAmount > 0.0 }
 
             if (hasYearlyExpenses) {
@@ -406,13 +421,21 @@ class MainActivity : AppCompatActivity() {
                 binding.tvMonthlyBreakdownSubtitle.text = "$activeMonthsCount active month${if (activeMonthsCount > 1) "s" else ""}"
 
                 val maxMonthAmount = monthlySummaries.maxOfOrNull { it.totalAmount }?.takeIf { it > 0.0 } ?: 1.0
+                val currentMonthChildCount = binding.layoutMonthlyList.childCount
 
-                for (monthSummary in monthlySummaries) {
-                    val itemBinding = ItemMonthSummaryBinding.inflate(
-                        layoutInflater,
-                        binding.layoutMonthlyList,
-                        false
-                    )
+                for (m in 0..11) {
+                    val monthSummary = monthlySummaries[m]
+                    val itemBinding = if (m < currentMonthChildCount) {
+                        ItemMonthSummaryBinding.bind(binding.layoutMonthlyList.getChildAt(m))
+                    } else {
+                        val inflated = ItemMonthSummaryBinding.inflate(
+                            layoutInflater,
+                            binding.layoutMonthlyList,
+                            false
+                        )
+                        binding.layoutMonthlyList.addView(inflated.root)
+                        inflated
+                    }
 
                     val monthColor = getMonthColor(monthSummary.monthIndex)
                     itemBinding.tvMonthBadge.text = monthSummary.monthShortName
@@ -489,8 +512,6 @@ class MainActivity : AppCompatActivity() {
                         updateTabSelectionUI()
                         loadExpenses()
                     }
-
-                    binding.layoutMonthlyList.addView(itemBinding.root)
                 }
             } else {
                 binding.cardMonthlyBreakdown.visibility = View.GONE
@@ -895,6 +916,21 @@ class MainActivity : AppCompatActivity() {
         dialogBinding.cardSettingsImportCsv.setOnClickListener {
             dialog.dismiss()
             showImportMenu(binding.btnImportCsv)
+        }
+
+        dialogBinding.btnChangePassword.setOnClickListener {
+            dialog.dismiss()
+            val intent = Intent(this, ChangePinActivity::class.java)
+            startActivity(intent)
+        }
+
+        dialogBinding.btnLockApp.setOnClickListener {
+            dialog.dismiss()
+            val intent = Intent(this, AuthActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
         }
 
         dialogBinding.btnApplySettings.setOnClickListener {

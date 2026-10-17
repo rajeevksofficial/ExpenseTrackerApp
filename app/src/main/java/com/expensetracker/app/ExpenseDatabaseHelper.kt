@@ -38,6 +38,14 @@ class ExpenseDatabaseHelper(context: Context) :
             )
         """.trimIndent()
         db.execSQL(createTable)
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_expenses_date ON $TABLE_EXPENSES($COL_DATE)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_expenses_category ON $TABLE_EXPENSES($COL_CATEGORY)")
+    }
+
+    override fun onOpen(db: SQLiteDatabase) {
+        super.onOpen(db)
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_expenses_date ON $TABLE_EXPENSES($COL_DATE)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_expenses_category ON $TABLE_EXPENSES($COL_CATEGORY)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -161,8 +169,7 @@ class ExpenseDatabaseHelper(context: Context) :
         return list
     }
 
-    fun getCategorySummary(startTime: Long, endTime: Long): List<CategorySummary> {
-        val expenses = getExpensesByDateRange(startTime, endTime)
+    fun getCategorySummaryFromExpenses(expenses: List<Expense>): List<CategorySummary> {
         val total = expenses.sumOf { it.amount }
         if (total <= 0.0) return emptyList()
 
@@ -175,24 +182,29 @@ class ExpenseDatabaseHelper(context: Context) :
             .sortedByDescending { it.totalAmount }
     }
 
-    fun getMonthlySummaryForYear(year: Int): List<MonthSummary> {
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.YEAR, year)
-        cal.set(Calendar.DAY_OF_YEAR, 1)
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
-        cal.set(Calendar.MILLISECOND, 0)
-        val startTime = cal.timeInMillis
+    fun getCategorySummary(startTime: Long, endTime: Long): List<CategorySummary> {
+        return getCategorySummaryFromExpenses(getExpensesByDateRange(startTime, endTime))
+    }
 
-        cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR))
-        cal.set(Calendar.HOUR_OF_DAY, 23)
-        cal.set(Calendar.MINUTE, 59)
-        cal.set(Calendar.SECOND, 59)
-        cal.set(Calendar.MILLISECOND, 999)
-        val endTime = cal.timeInMillis
+    fun getMonthlySummaryForYear(year: Int, preloadedYearExpenses: List<Expense>? = null): List<MonthSummary> {
+        val expenses = preloadedYearExpenses ?: run {
+            val cal = Calendar.getInstance()
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.DAY_OF_YEAR, 1)
+            cal.set(Calendar.HOUR_OF_DAY, 0)
+            cal.set(Calendar.MINUTE, 0)
+            cal.set(Calendar.SECOND, 0)
+            cal.set(Calendar.MILLISECOND, 0)
+            val startTime = cal.timeInMillis
 
-        val expenses = getExpensesByDateRange(startTime, endTime)
+            cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR))
+            cal.set(Calendar.HOUR_OF_DAY, 23)
+            cal.set(Calendar.MINUTE, 59)
+            cal.set(Calendar.SECOND, 59)
+            cal.set(Calendar.MILLISECOND, 999)
+            val endTime = cal.timeInMillis
+            getExpensesByDateRange(startTime, endTime)
+        }
         val totalYear = expenses.sumOf { it.amount }
 
         val tempCal = Calendar.getInstance()
